@@ -118,6 +118,8 @@ const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord}
       // location of the click, with description HTML from its properties.
       map.on('click', 'places-fill', function (e) {
         selectRecord(e.features[0].properties.id);
+
+        // Popup Tooltip
         // new mapboxgl.Popup()
         // .setLngLat(e.lngLat)
         // .setHTML(e.features[0].properties.name)
@@ -154,7 +156,7 @@ const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord}
         margin={2}
         padding={2}
         backgroundColor='grayDark1'
-        >
+      >
         <Text textColor='white'>
           Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
         </Text>

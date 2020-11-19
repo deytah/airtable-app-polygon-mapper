@@ -12,7 +12,9 @@ import {
     Box,
     Button,
     RecordCardList,
-    Switch
+    SelectButtons,
+    Switch,
+    Text
 } from '@airtable/blocks/ui';
 
 import MapBox from './MapBox';
@@ -20,14 +22,23 @@ import MapBox from './MapBox';
 function App({settings}) {
   useLoadable(cursor);
 
+  // States
   const [currentRecordIds, setCurrentRecordIds] = useState(cursor.selectedRecordIds);
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [showBackground, setShowBackground] = useState(false);
+  const [showConditions, setShowConditions] = useState(true);
+  const appMode = [
+    { value: 'view', label: 'View' },
+    { value: 'draw', label: 'Draw' }
+  ]
+  const [value, setValue] = useState(appMode[0].value);
 
+  // Watch
   useWatchable(cursor, ['activeTableId', 'activeViewId']);
   useWatchable(cursor, 'selectedRecordIds', () => {
     setCurrentRecordIds(cursor.selectedRecordIds);
   });
 
+  // Data
   const base = useBase();
   const activeTable = base.getTableByIdIfExists(cursor.activeTableId);
   const activeView = activeTable.getViewByIdIfExists(cursor.activeViewId);
@@ -47,26 +58,43 @@ function App({settings}) {
       flexDirection: 'column',
       height: '100vh'
     }}>
-      <Box padding={2} display="flex" alignItems="center" justifyContent="space-between">
-        <Switch
-          value={isEnabled}
-          onChange={newValue => setIsEnabled(newValue)}
-          label="Show Conditions"
-          size="small"
-          width="auto"
-        />
+      <Box padding={2} display='flex' alignItems='center' justifyContent='space-between'>
+        <Box
+        display='flex' alignItems='center' justifyContent='space-between'
+        >
+          <SelectButtons
+            value={value}
+            onChange={newValue => setValue(newValue)}
+            options={appMode}
+            size='small'
+            width='160px'
+            marginRight={2}
+          />
+          <Switch
+            value={showBackground}
+            onChange={newValue => setShowBackground(newValue)}
+            label='Background'
+            size='small'
+            width='auto'
+            marginRight={2}
+          />
+          <Switch
+            value={showConditions}
+            onChange={newValue => setShowConditions(newValue)}
+            label='Conditions'
+            size='small'
+            width='auto'
+          />
+        </Box>
         <Button
-          onClick={() => console.log("Button clicked")}
-          size="small"
-          icon="download"
+          onClick={() => console.log('Button clicked')}
+          size='small'
+          icon='download'
         >
           PDF
         </Button>
       </Box>
-      <div style={{
-        position: 'relative',
-        flexGrow: 1
-      }}>
+      <Box position='relative' flexGrow={1}>
         <MapBox
           accessToken={settings.mapboxAccessToken}
           activeView={activeView}
@@ -74,8 +102,20 @@ function App({settings}) {
           records={records}
           selectRecord={(id) => setCurrentRecordIds([id])}
         />
-      </div>
+      </Box>
       <Box height='100px'>
+        <Text
+          display='none'
+          alignItems='center'
+          justifyContent='center'
+          overflow='hiddden'
+          height='80px'
+          margin='10px'
+          borderRadius='3px'
+          boxShadow='rgba(0, 0, 0, 0.1) 0px 0px 0px 2px'
+        >
+          Select a record from Airtable or a shape on the map.
+        </Text>
         <RecordCardList records={selectedRecords} />
       </Box>
     </div>
