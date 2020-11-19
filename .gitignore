@@ -3,4 +3,3 @@
 /.block
 /build
 .env
-/frontend/activeRecord.js
