@@ -1,0 +1,6 @@
+/node_modules
+/.airtableblocksrc.json
+/.block
+/build
+.env
+/frontend/activeRecord.js
