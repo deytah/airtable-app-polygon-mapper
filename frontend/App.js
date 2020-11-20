@@ -93,6 +93,14 @@ function App({settings}) {
         >
           PDF
         </Button>
+        <Button
+          display='none'
+          onClick={() => console.log('Button clicked')}
+          size='small'
+          icon='upload'
+        >
+          Save
+        </Button>
       </Box>
       <Box position='relative' flexGrow={1}>
         <MapBox
