@@ -5,39 +5,58 @@ import {
 } from '@airtable/blocks/ui';
 import mapboxgl from 'mapbox-gl';
 
-const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord} ) => {
+const MapBox = ({
+    accessToken,
+    activeView,
+    geoJsonColumn,
+    records,
+    selectRecord,
+    setJsonErrorRecords
+  }) => {
 
   mapboxgl.accessToken = accessToken;
 
   const mapContainerRef = useRef(null);
 
+  const [features, setFeatures] = useState([]);
+  const [map, setMap] = useState(null);
   const [lng, setLng] = useState(-100);
   const [lat, setLat] = useState(38);
   const [zoom, setZoom] = useState(1);
 
-  const features = records.filter(record => record.getCellValue(geoJsonColumn)).map(record => {
-    const source = {
-      type: 'Feature',
-      geometry: JSON.parse(record.getCellValue(geoJsonColumn)),
-      properties: {
-        id: record.id,
-        name: record.name
-      }
-    };
+  // TODO: turn into function to run on first load as well as on any changes; cut down on redraw
+  useEffect(() => {
+    const jsonErrorRecords = [];
+    setFeatures(records.filter(record => record.getCellValue(geoJsonColumn)).map(record => {
+      try {
+        const source = {
+          type: 'Feature',
+          geometry: JSON.parse(record.getCellValue(geoJsonColumn)),
+          properties: {
+            id: record.id,
+            name: record.name
+          }
+        };
 
-    try {
-      const color = record.getColorHexInView(activeView);
-      if (color) {
-        source.properties.color = color;
-      }
-    } catch(e) {}
+        try {
+          const color = record.getColorHexInView(activeView);
+          if (color) {
+            source.properties.color = color;
+          }
+        } catch(e) {}
 
-    return source;
-  });
+        return source;
+
+      } catch (e) {
+        jsonErrorRecords.push(record.id);
+        return null;
+      }
+    }).filter(r => r !== null));
+    setJsonErrorRecords(jsonErrorRecords);
+  }, [records]);
 
   // Initialize map when component mounts
   useEffect(() => {
-    console.log('Hello, map!');
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -56,15 +75,17 @@ const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord}
 
     // Draw polygons
     map.on('load', function () {
+
+      // GeoJSON from activeView
       map.addSource('places', {
         'type': 'geojson',
         'data': {
           'type': 'FeatureCollection',
-          'features': features
+          'features': []
         },
       });
 
-      // Add a layer showing the places.
+      // Fill Layer
       map.addLayer({
         'id': 'places-fill',
         'type': 'fill',
@@ -81,6 +102,7 @@ const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord}
         }
       });
 
+      // Outline Layer
       map.addLayer({
         'id': 'places-outline',
         'type': 'line',
@@ -97,6 +119,7 @@ const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord}
         }
       });
 
+      // Hover Layer
       map.addLayer({
         'id': 'places-hover',
         'type': 'fill',
@@ -139,11 +162,33 @@ const MapBox = ( {accessToken, activeView, geoJsonColumn, records, selectRecord}
        map.setFilter('places-hover', ["==", "id", ""]);
       });
 
+      // Add Map to state
+      setMap(map);
+
+      // Update FeatureCollection data
+      updateMap();
     });
 
     // Clean up on unmount
     return () => map.remove();
   }, []);
+
+  // Update FeatureCollection data
+  function updateMap() {
+    if(map) {
+      console.log('Redrawing features')
+      const source = map.getSource('places');
+      source.setData({
+        type: 'FeatureCollection',
+        features
+      });
+    }
+  }
+
+  // Observe features for record changes
+  useEffect(() => {
+    updateMap();
+  })
 
   return (
     <>

@@ -7,7 +7,6 @@ import {
     useLoadable,
     useRecordById,
     useRecords,
-    useSettingsButton,
     useWatchable,
     Box,
     Button,
@@ -19,7 +18,7 @@ import {
 
 import MapBox from './MapBox';
 
-function App({settings}) {
+function App({activeTable, activeView, settings}) {
   useLoadable(cursor);
 
   // States
@@ -31,18 +30,14 @@ function App({settings}) {
     { value: 'draw', label: 'Draw' }
   ]
   const [value, setValue] = useState(appMode[0].value);
+  const [jsonErrorRecords, setJsonErrorRecords] = useState([]);
 
   // Watch
-  useWatchable(cursor, ['activeTableId', 'activeViewId']);
   useWatchable(cursor, 'selectedRecordIds', () => {
     setCurrentRecordIds(cursor.selectedRecordIds);
   });
 
   // Data
-  const base = useBase();
-  const activeTable = base.getTableByIdIfExists(cursor.activeTableId);
-  const activeView = activeTable.getViewByIdIfExists(cursor.activeViewId);
-
   const records = useRecords(activeView, {
     recordColorMode: recordColoring.modes.byView(activeView)
   });
@@ -53,15 +48,21 @@ function App({settings}) {
   const selectedRecords = currentRecordIds.map(id => recordMap.get(id));
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh'
-    }}>
-      <Box padding={2} display='flex' alignItems='center' justifyContent='space-between'>
+    <>
+      <Box padding={2} display='flex' flexWrap='wrap' alignItems='center' justifyContent='space-between'>
         <Box
-        display='flex' alignItems='center' justifyContent='space-between'
+        display='flex' flexWrap='wrap' alignItems='center' justifyContent='space-between'
         >
+          {jsonErrorRecords.length === 0 ? '' : (
+            <Button
+              onClick={() => alert(jsonErrorRecords.join(','))}
+              size='small'
+              icon='warning'
+              variant='danger'
+              marginRight={2}
+              aria-label="GeoJSON Error"
+            ></Button>
+          )}
           <SelectButtons
             value={value}
             onChange={newValue => setValue(newValue)}
@@ -109,6 +110,9 @@ function App({settings}) {
           geoJsonColumn={settings.mapboxJsonTitle}
           records={records}
           selectRecord={(id) => setCurrentRecordIds([id])}
+          setJsonErrorRecords={(ids) => {
+            if(jsonErrorRecords.length !== ids.length) setJsonErrorRecords(ids);
+          }}
         />
       </Box>
       <Box height='100px'>
@@ -126,7 +130,7 @@ function App({settings}) {
         </Text>
         <RecordCardList records={selectedRecords} />
       </Box>
-    </div>
+    </>
   );
 }
 

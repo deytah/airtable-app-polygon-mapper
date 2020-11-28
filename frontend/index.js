@@ -18,7 +18,7 @@ import {
     TextButton,
 } from '@airtable/blocks/ui';
 
-import App from './App';
+import AppWrapper from './AppWrapper';
 import {useSettings} from './settings';
 import SettingsForm from './SettingsForm';
 
@@ -41,7 +41,13 @@ function MapboxViewer() {
         {isSettingsOpen || !isValid ? (
             <SettingsForm setIsSettingsOpen={setIsSettingsOpen} />
         ) : (
-          <App settings={settings}/>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh'
+          }}>
+            <AppWrapper settings={settings}/>
+          </div>
         )}
       </>
   );
