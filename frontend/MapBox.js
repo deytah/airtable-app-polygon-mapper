@@ -24,14 +24,13 @@ const MapBox = ({
   const [lat, setLat] = useState(38);
   const [zoom, setZoom] = useState(1);
 
-  // TODO: turn into function to run on first load as well as on any changes; cut down on redraw
-  useEffect(() => {
+  function parseFeatures() {
     const jsonErrorRecords = [];
-    setFeatures(records.filter(record => record.getCellValue(geoJsonColumn)).map(record => {
+    const newFeatures = records.filter(record => record.getCellValue(geoJsonColumn)).map(record => {
       try {
         const source = {
           type: 'Feature',
-          geometry: JSON.parse(record.getCellValue(geoJsonColumn)),
+          geometry: JSON.parse(record.getCellValueAsString(geoJsonColumn)),
           properties: {
             id: record.id,
             name: record.name
@@ -43,7 +42,7 @@ const MapBox = ({
           if (color) {
             source.properties.color = color;
           }
-        } catch(e) {}
+        } catch(e) { null }
 
         return source;
 
@@ -51,8 +50,15 @@ const MapBox = ({
         jsonErrorRecords.push(record.id);
         return null;
       }
-    }).filter(r => r !== null));
+    }).filter(r => r !== null);
+    if (JSON.stringify(newFeatures) !== JSON.stringify(features)) {
+      setFeatures(newFeatures);
+    }
     setJsonErrorRecords(jsonErrorRecords);
+  }
+
+  useEffect(() => {
+    parseFeatures();
   }, [records]);
 
   // Initialize map when component mounts
@@ -176,7 +182,6 @@ const MapBox = ({
   // Update FeatureCollection data
   function updateMap() {
     if(map) {
-      console.log('Redrawing features')
       const source = map.getSource('places');
       source.setData({
         type: 'FeatureCollection',
@@ -188,32 +193,31 @@ const MapBox = ({
   // Observe features for record changes
   useEffect(() => {
     updateMap();
-  })
+  }, [features, map])
 
   return (
     <>
       <Box
-        display='none'
-        position='absolute'
+        display="none"
+        position="absolute"
         top={0}
         left={0}
-        zIndex='5'
+        zIndex="5"
         margin={2}
         padding={2}
-        backgroundColor='grayDark1'
+        backgroundColor="grayDark1"
       >
-        <Text textColor='white'>
+        <Text textColor="white">
           Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
         </Text>
       </Box>
-      <div className='map-container' ref={mapContainerRef}
+      <div className="map-container" ref={mapContainerRef}
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           bottom: 0,
           left: 0,
           right: 0,
-          borderBottom: '1px solid #ddd',
         }} />
     </>
   );
