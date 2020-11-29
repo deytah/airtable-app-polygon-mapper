@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {cursor} from '@airtable/blocks';
-import {recordColoring} from '@airtable/blocks/models';
+import {cursor, session} from '@airtable/blocks';
 import {
     useLoadable,
     useRecords,
@@ -19,16 +18,17 @@ import RecordErrorDialog from './RecordErrorDialog';
 
 function App({activeTable, activeView, settings}) {
   useLoadable(cursor);
+  const canUpdate = session.checkPermissionsForUpdateRecords().hasPermission;
+  const appMode = [
+    { value: false, label: 'View' },
+    { value: true, label: 'Draw' }
+  ]
 
   // States
   const [currentRecordIds, setCurrentRecordIds] = useState(cursor.selectedRecordIds);
   const [showBackground, setShowBackground] = useState(false);
   const [showConditions, setShowConditions] = useState(true);
-  const appMode = [
-    { value: 'view', label: 'View' },
-    { value: 'draw', label: 'Draw' }
-  ]
-  const [value, setValue] = useState(appMode[0].value);
+  const [editMode, setEditMode] = useState(false);
   const [jsonErrorRecordIds, setJsonErrorRecordIds] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -76,14 +76,16 @@ function App({activeTable, activeView, settings}) {
           {isDialogOpen && (
             <RecordErrorDialog records={jsonErrorRecords} closeDialog={() => setIsDialogOpen(false)} />
           )}
-          <SelectButtons
-            value={value}
-            onChange={newValue => setValue(newValue)}
-            options={appMode}
-            size="small"
-            width="160px"
-            marginRight={2}
-          />
+          {canUpdate && (
+            <SelectButtons
+              value={editMode}
+              onChange={newValue => setEditMode(newValue)}
+              options={appMode}
+              size="small"
+              width="160px"
+              marginRight={2}
+            />
+          )}
           <Switch
             value={showBackground}
             onChange={newValue => setShowBackground(newValue)}
@@ -100,21 +102,23 @@ function App({activeTable, activeView, settings}) {
             width="auto"
           />
         </Box>
-        <Button
-          onClick={() => console.log('Button clicked')}
-          size="small"
-          icon="download"
-        >
-          PDF
-        </Button>
-        <Button
-          display="none"
-          onClick={() => console.log('Button clicked')}
-          size="small"
-          icon="upload"
-        >
-          Save
-        </Button>
+        {editMode ? (
+          <Button
+            onClick={() => console.log('Button clicked')}
+            size="small"
+            icon="upload"
+          >
+            Save
+          </Button>
+        ) : (
+          <Button
+            onClick={() => console.log('Button clicked')}
+            size="small"
+            icon="download"
+          >
+            PDF
+          </Button>
+        )}
       </Box>
       <Box position="relative" flexGrow={1}>
         <MapBox
