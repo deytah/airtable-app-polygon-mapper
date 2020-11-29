@@ -38,9 +38,7 @@ function App({activeTable, activeView, settings}) {
   });
 
   // Data
-  const records = useRecords(activeView, {
-    recordColorMode: recordColoring.modes.byView(activeView)
-  });
+  const records = useRecords(activeView);
 
   const recordMap = new Map();
   records.forEach(record => recordMap.set(record.id, record));
