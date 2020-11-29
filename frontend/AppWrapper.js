@@ -30,7 +30,7 @@ function AppWrapper({settings}) {
     return (
       <Box padding={2} display="flex" alignItems="center" justifyContent="center" height="100%">
         <Text>
-          GeoJSON field "{settings.mapboxJsonTitle}" not found for the current table.
+          GeoJSON field “{settings.mapboxJsonTitle}” not found for the current table.
         </Text>
       </Box>
     );
@@ -39,7 +39,6 @@ function AppWrapper({settings}) {
   return (
     <ViewportConstraint minSize={{width: 530}}>
       <App settings={settings}
-        activeTable={activeTable}
         activeView={activeView}
       />
    </ViewportConstraint>

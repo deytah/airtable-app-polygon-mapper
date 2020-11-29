@@ -9,10 +9,12 @@ const MapBox = ({
     accessToken,
     activeView,
     geoJsonColumn,
+    map,
     records,
     selectedRecordIds,
     selectRecord,
     setJsonErrorRecords,
+    setMap,
     showColors
   }) => {
 
@@ -21,7 +23,6 @@ const MapBox = ({
   const mapContainerRef = useRef(null);
 
   const [features, setFeatures] = useState([]);
-  const [map, setMap] = useState(null);
   const [lng, setLng] = useState(-100);
   const [lat, setLat] = useState(38);
   const [zoom, setZoom] = useState(1);
@@ -185,7 +186,10 @@ const MapBox = ({
     });
 
     // Clean up on unmount
-    return () => map.remove();
+    return () => {
+      map.remove();
+      setMap(null);
+    }
   }, []);
 
   // Update FeatureCollection data

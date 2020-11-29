@@ -15,18 +15,19 @@ import {
 
 import MapBox from './MapBox';
 import RecordErrorDialog from './RecordErrorDialog';
+import SaveMapDialog from './SaveMapDialog';
 
-function App({activeTable, activeView, settings}) {
+// Switch options
+const appMode = [
+  { value: false, label: 'View' },
+  { value: true, label: 'Draw' }
+];
+
+function App({activeView, settings}) {
   useLoadable(cursor);
 
   // Permissions
   const canUpdate = session.checkPermissionsForUpdateRecords().hasPermission;
-
-  // Switch options
-  const appMode = [
-    { value: false, label: 'View' },
-    { value: true, label: 'Draw' }
-  ];
 
   // Key for storing temporary preferences
   const sessionPrefsKey = `mapbox_prefs_${base.id}`;
@@ -44,7 +45,9 @@ function App({activeTable, activeView, settings}) {
   const [showConditions, setShowConditions] = useState(sessionPrefs.showConditions);
   const [editMode, setEditMode] = useState(false);
   const [jsonErrorRecordIds, setJsonErrorRecordIds] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [map, setMap] = useState(null);
 
   // Watch
   useWatchable(cursor, 'selectedRecordIds', () => {
@@ -87,16 +90,13 @@ function App({activeTable, activeView, settings}) {
         >
           {jsonErrorRecords.length === 0 ? '' : (
             <Button
-              onClick={() => setIsDialogOpen(true)}
+              onClick={() => setIsErrorDialogOpen(true)}
               size="small"
               icon="warning"
               variant="danger"
               marginRight={2}
               aria-label="GeoJSON Error"
             ></Button>
-          )}
-          {isDialogOpen && (
-            <RecordErrorDialog records={jsonErrorRecords} closeDialog={() => setIsDialogOpen(false)} />
           )}
           {canUpdate && (
             <SelectButtons
@@ -134,7 +134,7 @@ function App({activeTable, activeView, settings}) {
           </Button>
         ) : (
           <Button
-            onClick={() => console.log('Button clicked')}
+            onClick={() => setIsSaveDialogOpen(true)}
             size="small"
             icon="download"
           >
@@ -147,12 +147,14 @@ function App({activeTable, activeView, settings}) {
           accessToken={settings.mapboxAccessToken}
           activeView={activeView}
           geoJsonColumn={settings.mapboxJsonTitle}
+          map={map}
           records={records}
           selectRecord={(id) => setCurrentRecordIds([id])}
           selectedRecordIds={currentRecordIds}
           setJsonErrorRecords={(ids) => {
             if(jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
           }}
+          setMap={setMap}
           showColors={showConditions}
         />
       </Box>
@@ -180,6 +182,12 @@ function App({activeTable, activeView, settings}) {
         <RecordCardList records={selectedRecords} />
         )}
       </Box>
+      {isErrorDialogOpen && (
+        <RecordErrorDialog records={jsonErrorRecords} closeDialog={() => setIsErrorDialogOpen(false)} />
+      )}
+      {isSaveDialogOpen && (
+        <SaveMapDialog closeDialog={() => setIsSaveDialogOpen(false)} map={map} />
+      )}
     </>
   );
 }
