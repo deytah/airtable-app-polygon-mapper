@@ -7,11 +7,10 @@ import {
     FormField,
     Heading,
     InputSynced,
-    Label,
     Text,
 } from '@airtable/blocks/ui';
 
-import {useSettings, ConfigKeys, allowedUrlFieldTypes} from './settings';
+import {useSettings, ConfigKeys} from './settings';
 
 function SettingsForm({setIsSettingsOpen}) {
     const globalConfig = useGlobalConfig();

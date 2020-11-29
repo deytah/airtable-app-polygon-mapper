@@ -1,11 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {cursor} from '@airtable/blocks';
 import {recordColoring} from '@airtable/blocks/models';
 import {
-    useBase,
     useLoadable,
-    useRecordById,
     useRecords,
     useWatchable,
     Box,

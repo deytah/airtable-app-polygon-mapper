@@ -1,12 +1,11 @@
 import {useBase, useGlobalConfig} from '@airtable/blocks/ui';
-import {FieldType} from '@airtable/blocks/models';
 
 export const ConfigKeys = {
     MAPBOX_ACCESS_TOKEN: 'mapboxAccessToken',
     MAPBOX_JSON_TITLE: 'mapboxJsonTitle'
 };
 
-function getSettings(globalConfig, base) {
+function getSettings(globalConfig) {
     const mapboxAccessToken = globalConfig.get(ConfigKeys.MAPBOX_ACCESS_TOKEN);
     const mapboxJsonTitle = globalConfig.get(ConfigKeys.MAPBOX_JSON_TITLE);
 

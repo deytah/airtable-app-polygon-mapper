@@ -1,21 +1,8 @@
-import React, {Fragment, useState, useCallback, useEffect} from 'react';
+import React, {useState} from 'react';
 
-import {cursor} from '@airtable/blocks';
-import {ViewType} from '@airtable/blocks/models';
 import {
     initializeBlock,
-    registerRecordActionDataCallback,
-    useBase,
-    useRecordById,
-    useLoadable,
     useSettingsButton,
-    useWatchable,
-    Box,
-    Dialog,
-    Heading,
-    Link,
-    Text,
-    TextButton,
 } from '@airtable/blocks/ui';
 
 import AppWrapper from './AppWrapper';
