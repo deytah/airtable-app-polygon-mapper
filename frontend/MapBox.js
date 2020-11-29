@@ -10,6 +10,7 @@ const MapBox = ({
     activeView,
     geoJsonColumn,
     records,
+    selectedRecordIds,
     selectRecord,
     setJsonErrorRecords
   }) => {
@@ -33,7 +34,8 @@ const MapBox = ({
           geometry: JSON.parse(record.getCellValueAsString(geoJsonColumn)),
           properties: {
             id: record.id,
-            name: record.name
+            name: record.name,
+            selected: selectedRecordIds.includes(record.id)
           }
         };
 
@@ -104,7 +106,12 @@ const MapBox = ({
             ['get', 'color'],
             '#627BC1'
           ],
-          'fill-opacity': 0.5
+          'fill-opacity': [
+            'case',
+            ['get', 'selected'],
+            0.75, // Selected
+            0.3 // Default
+          ]
         }
       });
 
@@ -138,7 +145,7 @@ const MapBox = ({
             ['get', 'color'],
             '#627BC1'
           ],
-          'fill-opacity': 0.75
+          'fill-opacity': 0.85
         },
         'filter': ["==", "id", ""]
       });

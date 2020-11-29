@@ -125,6 +125,7 @@ function App({activeTable, activeView, settings}) {
           geoJsonColumn={settings.mapboxJsonTitle}
           records={records}
           selectRecord={(id) => setCurrentRecordIds([id])}
+          selectedRecordIds={currentRecordIds}
           setJsonErrorRecords={(ids) => {
             if(jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
           }}
