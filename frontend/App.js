@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import {cursor, session} from '@airtable/blocks';
+import {base, cursor, session} from '@airtable/blocks';
 import {
     useLoadable,
     useRecords,
@@ -18,16 +18,30 @@ import RecordErrorDialog from './RecordErrorDialog';
 
 function App({activeTable, activeView, settings}) {
   useLoadable(cursor);
+
+  // Permissions
   const canUpdate = session.checkPermissionsForUpdateRecords().hasPermission;
+
+  // Switch options
   const appMode = [
     { value: false, label: 'View' },
     { value: true, label: 'Draw' }
-  ]
+  ];
+
+  // Key for storing temporary preferences
+  const sessionPrefsKey = `mapbox_prefs_${base.id}`;
+  // Load session preferences
+  const sessionPrefs = (
+    sessionStorage.getItem(sessionPrefsKey) && JSON.parse(sessionStorage.getItem(sessionPrefsKey))
+  ) || { // Defaults
+    showBackground: false,
+    showConditions: true
+  };
 
   // States
   const [currentRecordIds, setCurrentRecordIds] = useState(cursor.selectedRecordIds);
-  const [showBackground, setShowBackground] = useState(false);
-  const [showConditions, setShowConditions] = useState(true);
+  const [showBackground, setShowBackground] = useState(sessionPrefs.showBackground);
+  const [showConditions, setShowConditions] = useState(sessionPrefs.showConditions);
   const [editMode, setEditMode] = useState(false);
   const [jsonErrorRecordIds, setJsonErrorRecordIds] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -36,6 +50,14 @@ function App({activeTable, activeView, settings}) {
   useWatchable(cursor, 'selectedRecordIds', () => {
     setCurrentRecordIds(cursor.selectedRecordIds);
   });
+
+  // Update session storage with user choices
+  useEffect(() => {
+    sessionStorage.setItem(sessionPrefsKey, JSON.stringify({
+      showBackground,
+      showConditions
+    }));
+  }, [showBackground, showConditions]);
 
   // Data
   const records = useRecords(activeView);
