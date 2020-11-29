@@ -127,6 +127,7 @@ function App({activeTable, activeView, settings}) {
           setJsonErrorRecords={(ids) => {
             if(jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
           }}
+          showColors={showConditions}
         />
       </Box>
       <Box

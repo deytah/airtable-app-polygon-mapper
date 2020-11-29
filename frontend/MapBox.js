@@ -12,7 +12,8 @@ const MapBox = ({
     records,
     selectedRecordIds,
     selectRecord,
-    setJsonErrorRecords
+    setJsonErrorRecords,
+    showColors
   }) => {
 
   mapboxgl.accessToken = accessToken;
@@ -39,13 +40,14 @@ const MapBox = ({
           }
         };
 
-        try {
-          const color = record.getColorHexInView(activeView);
-          if (color) {
-            source.properties.color = color;
-          }
-        } catch(e) { null }
-
+        if (showColors) {
+          try {
+            const color = record.getColorHexInView(activeView);
+            if (color) {
+              source.properties.color = color;
+            }
+          } catch(e) { null }
+        }
         return source;
 
       } catch (e) {
