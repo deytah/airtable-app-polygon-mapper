@@ -10,7 +10,7 @@ import {
     Text,
 } from '@airtable/blocks/ui';
 
-import {useSettings, ConfigKeys} from './settings';
+import {useSettings, ConfigKeys} from '../hooks/settings';
 
 function SettingsForm({setIsSettingsOpen}) {
     const globalConfig = useGlobalConfig();

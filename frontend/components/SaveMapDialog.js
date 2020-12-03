@@ -65,7 +65,6 @@ export default function SaveMapDialog({
 
   function save() {
     const footer = ReactDOMServer.renderToString(getFooter(attributionText));
-    console.log(footer);
     printPdf.build()
         .format(paperFormat)[paperOrientation]()
         .footer({

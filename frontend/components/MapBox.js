@@ -1,28 +1,37 @@
-import React, { useRef, useEffect, useState } from 'react';
-import {
-  Box,
-  Text
-} from '@airtable/blocks/ui';
+import React, {useEffect, useRef, useState} from 'react';
+import {Box, Text} from '@airtable/blocks/ui';
+
+import * as geojsonBounds from 'geojson-bounds';
 import mapboxgl from 'mapbox-gl';
 
+import findPoint from '../lib/findPoint';
+import debounce from '../lib/debounce';
+
+import addClustering from '../map/addClustering';
+import addHover from "../map/addHover";
+import addPlacesLayers from "../map/addPlacesLayers";
+import addSources from "../map/addSources";
+import zoomSelected from '../map/zoomSelected';
+
 const MapBox = ({
-    accessToken,
-    activeView,
-    geoJsonColumn,
-    map,
-    records,
-    selectedRecordIds,
-    selectRecord,
-    setJsonErrorRecords,
-    setMap,
-    showColors
-  }) => {
+                  accessToken,
+                  activeView,
+                  geoJsonColumn,
+                  map,
+                  records,
+                  selectedRecordIds,
+                  selectRecord,
+                  setJsonErrorRecords,
+                  setMap,
+                  showColors
+                }) => {
 
   mapboxgl.accessToken = accessToken;
 
   const mapContainerRef = useRef(null);
 
   const [features, setFeatures] = useState([]);
+  const [initialized, setInitialized] = useState(false);
   const [lng, setLng] = useState(-100);
   const [lat, setLat] = useState(38);
   const [zoom, setZoom] = useState(1);
@@ -34,6 +43,7 @@ const MapBox = ({
         const source = {
           type: 'Feature',
           geometry: JSON.parse(record.getCellValueAsString(geoJsonColumn)),
+          id: record.id,
           properties: {
             id: record.id,
             name: record.name,
@@ -41,13 +51,17 @@ const MapBox = ({
           }
         };
 
+        source.properties.labelPoint = findPoint(source);
+
         if (showColors) {
           try {
             const color = record.getColorHexInView(activeView);
             if (color) {
               source.properties.color = color;
             }
-          } catch(e) { null }
+          } catch (e) {
+            null
+          }
         }
         return source;
 
@@ -61,6 +75,34 @@ const MapBox = ({
     }
     setJsonErrorRecords(jsonErrorRecords);
   }
+
+  const labels = features.map(feature => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: feature.properties.labelPoint
+      },
+      properties: {
+        id: feature.properties.id,
+        name: feature.properties.name,
+        original: feature,
+        selected: feature.properties.selected,
+      }
+    };
+  });
+
+  useEffect(() => {
+    if (initialized) {
+      zoomSelected(map, selectedRecordIds, features);
+    }
+  }, [selectedRecordIds]);
+
+  useEffect(() => {
+    if (initialized) {
+      setInitialized(false);
+    }
+  }, [activeView]);
 
   useEffect(() => {
     parseFeatures();
@@ -86,91 +128,35 @@ const MapBox = ({
 
     // Draw polygons
     map.on('load', function () {
+      addSources(map);
 
-      // GeoJSON from activeView
-      map.addSource('places', {
-        'type': 'geojson',
-        'data': {
-          'type': 'FeatureCollection',
-          'features': []
+      addPlacesLayers(map);
+
+      map.addLayer({
+        'id': 'labels-text',
+        'type': 'symbol',
+        'source': 'labels',
+        'layout': {
+          'text-field': ['get', 'name'],
+          'text-variable-anchor': ['center'],
+          'text-justify': 'auto',
         },
+        'filter': ['!', ['has', 'point_count']],
       });
 
-      // Fill Layer
-      map.addLayer({
-        'id': 'places-fill',
-        'type': 'fill',
-        'source': 'places',
-        'layout': {},
-        'paint': {
-          'fill-color': [
-            'case',
-            ['has', 'color'],
-            ['get', 'color'],
-            '#627BC1'
-          ],
-          'fill-opacity': [
-            'case',
-            ['get', 'selected'],
-            0.75, // Selected
-            0.3 // Default
-          ]
-        }
-      });
+      addClustering(map);
 
-      // Outline Layer
-      map.addLayer({
-        'id': 'places-outline',
-        'type': 'line',
-        'source': 'places',
-        'layout': {},
-        'paint': {
-          'line-color': [
-            'case',
-            ['has', 'color'],
-            ['get', 'color'],
-            '#627BC1'
-          ],
-          'line-width': 2
-        }
-      });
-
-      // TODO: Add labels using 'Name'
-      // TODO: Polylabel - https://github.com/mapbox/polylabel/issues/54#issuecomment-638917580
-      // Text Layer
-      // map.addLayer({
-      //   'id': 'text-label',
-      //   'type': 'symbol',
-      //   'source': 'places',
-      //   'layout': {
-      //     'text-field': ['get', 'name'],
-      //     'text-variable-anchor': ['center'],
-      //     'text-justify': 'auto',
-      //   }
-      // });
-
-      // Hover Layer
-      map.addLayer({
-        'id': 'places-hover',
-        'type': 'fill',
-        'source': 'places',
-        'layout': {},
-        'paint': {
-          'fill-color': [
-            'case',
-            ['has', 'color'],
-            ['get', 'color'],
-            '#627BC1'
-          ],
-          'fill-opacity': 0.85
-        },
-        'filter': ["==", "id", ""]
-      });
+      // Adds additional fill layer and events
+      addHover(map);
 
       // When a click event occurs on a feature in the places layer, open a popup at the
       // location of the click, with description HTML from its properties.
       map.on('click', 'places-fill', function (e) {
         selectRecord(e.features[0].properties.id);
+
+        map.fitBounds(geojsonBounds.extent(e.features[0]), {
+          padding: 20,
+        });
 
         // Popup Tooltip
         // new mapboxgl.Popup()
@@ -179,18 +165,14 @@ const MapBox = ({
         // .addTo(map);
       });
 
-      // Change the cursor to a pointer when the mouse is over the places layer.
-      // Apply hover filter
-      map.on('mousemove', 'places-fill', function (e) {
-        map.getCanvas().style.cursor = 'pointer';
-        map.setFilter('places-hover', ["==", "id", e.features[0].properties.id]);
+      const labelsDebounce = debounce(() => updateMapPolygons(map), 500);
+      map.on('sourcedata', (e) => {
+        if (e.sourceId === 'labels') {
+          labelsDebounce();
+        }
       });
-
-      // Change it back to a pointer when it leaves.
-      map.on('mouseleave', 'places-fill', function () {
-        map.getCanvas().style.cursor = '';
-       map.setFilter('places-hover', ["==", "id", ""]);
-      });
+      map.on('zoomend', labelsDebounce);
+      map.on('moveend', labelsDebounce);
 
       // Add Map to state
       setMap(map);
@@ -206,14 +188,29 @@ const MapBox = ({
     }
   }, []);
 
+  function updateMapPolygons(map) {
+    const features = map.querySourceFeatures('labels', {sourceLayer: 'labels-text'})
+      .filter(feature => !feature.id)
+      .map(f => JSON.parse(f.properties.original));
+    map.getSource('places').setData({
+      type: 'FeatureCollection',
+      features
+    });
+  }
+
   // Update FeatureCollection data
   function updateMap() {
-    if(map) {
-      const source = map.getSource('places');
-      source.setData({
+    if (map) {
+      const labelsSource = map.getSource('labels');
+      labelsSource.setData({
         type: 'FeatureCollection',
-        features
+        features: labels
       });
+
+      if (!initialized) {
+        zoomSelected(map, selectedRecordIds, features);
+        setInitialized(true);
+      }
     }
   }
 
@@ -232,20 +229,21 @@ const MapBox = ({
         zIndex="5"
         margin={2}
         padding={2}
-        backgroundColor="grayDark1"
-      >
+        backgroundColor="grayDark1">
         <Text textColor="white">
           Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
         </Text>
       </Box>
-      <div className="map-container" ref={mapContainerRef}
+      <div
+        className="map-container"
+        ref={mapContainerRef}
         style={{
           position: "absolute",
           top: 0,
           bottom: 0,
           left: 0,
           right: 0,
-        }} />
+        }}/>
     </>
   );
 };

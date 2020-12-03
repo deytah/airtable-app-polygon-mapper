@@ -1,19 +1,25 @@
 import React, {useState} from 'react';
 
+import {session} from "@airtable/blocks";
 import {
     initializeBlock,
     useSettingsButton,
 } from '@airtable/blocks/ui';
 
-import AppWrapper from './AppWrapper';
-import {useSettings} from './settings';
-import SettingsForm from './SettingsForm';
+import AppWrapper from './components/AppWrapper';
+import {useSettings} from './hooks/settings';
+import SettingsForm from './components/SettingsForm';
+
+function AddSettingsButton({toggleOpen}) {
+  useSettingsButton(() => toggleOpen);
+  return '';
+}
 
 function MapboxViewer() {
+  const canUpdate = session.checkPermissionsForUpdateRecords().hasPermission;
 
   // Settings
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  useSettingsButton(() => setIsSettingsOpen(!isSettingsOpen));
 
   const {isValid, settings} = useSettings();
 
@@ -25,6 +31,9 @@ function MapboxViewer() {
   return (
       <>
         <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+        {canUpdate && (
+          <AddSettingsButton toggleOpen={() => setIsSettingsOpen(!isSettingsOpen)}/>
+        )}
         {isSettingsOpen || !isValid ? (
             <SettingsForm setIsSettingsOpen={setIsSettingsOpen} />
         ) : (
