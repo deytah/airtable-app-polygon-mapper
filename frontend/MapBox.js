@@ -135,6 +135,20 @@ const MapBox = ({
         }
       });
 
+      // TODO: Add labels using 'Name'
+      // TODO: Polylabel - https://github.com/mapbox/polylabel/issues/54#issuecomment-638917580
+      // Text Layer
+      // map.addLayer({
+      //   'id': 'text-label',
+      //   'type': 'symbol',
+      //   'source': 'places',
+      //   'layout': {
+      //     'text-field': ['get', 'name'],
+      //     'text-variable-anchor': ['center'],
+      //     'text-justify': 'auto',
+      //   }
+      // });
+
       // Hover Layer
       map.addLayer({
         'id': 'places-hover',
