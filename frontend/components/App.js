@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {base, cursor, session} from '@airtable/blocks';
 import {
-    useLoadable,
-    useRecords,
-    useWatchable,
-    Box,
-    Button,
-    RecordCardList,
-    SelectButtons,
-    Switch,
-    Text
+  useLoadable,
+  useRecords,
+  useWatchable,
+  Box,
+  Button,
+  RecordCardList,
+  SelectButtons,
+  Switch,
+  Text
 } from '@airtable/blocks/ui';
 
 import MapBox from './MapBox';
@@ -19,8 +19,8 @@ import SaveMapDialog from './SaveMapDialog';
 
 // Switch options
 const appMode = [
-  { value: false, label: 'View' },
-  { value: true, label: 'Draw' }
+  {value: false, label: 'View'},
+  {value: true, label: 'Draw'}
 ];
 
 function App({activeView, settings}) {
@@ -60,6 +60,7 @@ function App({activeView, settings}) {
       showBackground,
       showConditions
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showBackground, showConditions]);
 
   // Data
@@ -98,12 +99,12 @@ function App({activeView, settings}) {
               variant="danger"
               marginRight={2}
               aria-label="GeoJSON Error"
-            ></Button>
+            />
           )}
           {canUpdate && (
             <SelectButtons
               value={editMode}
-              onChange={newValue => setEditMode(newValue)}
+              onChange={newValue => setEditMode(!!newValue)}
               options={appMode}
               size="small"
               width="160px"
@@ -154,7 +155,7 @@ function App({activeView, settings}) {
           selectRecord={(id) => setCurrentRecordIds([id])}
           selectedRecordIds={currentRecordIds}
           setJsonErrorRecords={(ids) => {
-            if(jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
+            if (jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
           }}
           setMap={setMap}
           showColors={showConditions}
@@ -167,28 +168,28 @@ function App({activeView, settings}) {
         overflow="hidden"
       >
         {selectedRecords.length === 0 ? (
-        <Text
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          overflow="hidden"
-          height="80px"
-          margin="10px"
-          backgroundColor="white"
-          borderRadius="3px"
-          boxShadow="rgba(0, 0, 0, 0.1) 0px 0px 0px 2px"
-        >
-          Select a record from Airtable or a shape on the map.
-        </Text>
+          <Text
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            overflow="hidden"
+            height="80px"
+            margin="10px"
+            backgroundColor="white"
+            borderRadius="3px"
+            boxShadow="rgba(0, 0, 0, 0.1) 0px 0px 0px 2px"
+          >
+            Select a record from Airtable or a shape on the map.
+          </Text>
         ) : (
-        <RecordCardList records={selectedRecords} />
+          <RecordCardList records={selectedRecords}/>
         )}
       </Box>
       {isErrorDialogOpen && (
-        <RecordErrorDialog records={jsonErrorRecords} closeDialog={() => setIsErrorDialogOpen(false)} />
+        <RecordErrorDialog records={jsonErrorRecords} closeDialog={() => setIsErrorDialogOpen(false)}/>
       )}
       {isSaveDialogOpen && (
-        <SaveMapDialog closeDialog={() => setIsSaveDialogOpen(false)} map={map} />
+        <SaveMapDialog closeDialog={() => setIsSaveDialogOpen(false)} map={map}/>
       )}
     </>
   );
