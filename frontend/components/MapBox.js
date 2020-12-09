@@ -16,7 +16,8 @@ import zoomSelected from '../map/zoomSelected';
 const MapBox = ({
                   accessToken,
                   activeView,
-                  geoJsonColumn,
+                  geoJsonField,
+                  labelField,
                   map,
                   records,
                   selectedRecordIds,
@@ -38,15 +39,15 @@ const MapBox = ({
 
   function parseFeatures() {
     const jsonErrorRecords = [];
-    const newFeatures = records.filter(record => record.getCellValue(geoJsonColumn)).map(record => {
+    const newFeatures = records.filter(record => record.getCellValue(geoJsonField)).map(record => {
       try {
         const source = {
           type: 'Feature',
-          geometry: JSON.parse(record.getCellValueAsString(geoJsonColumn)),
+          geometry: JSON.parse(record.getCellValueAsString(geoJsonField)),
           id: record.id,
           properties: {
             id: record.id,
-            name: record.name,
+            name: record.getCellValueAsString(labelField),
             selected: selectedRecordIds.includes(record.id)
           }
         };

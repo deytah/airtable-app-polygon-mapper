@@ -23,7 +23,7 @@ const appMode = [
   {value: true, label: 'Draw'}
 ];
 
-function App({activeView, settings}) {
+function App({activeTable, activeView, settings}) {
   useLoadable(cursor);
 
   // Permissions
@@ -74,6 +74,8 @@ function App({activeView, settings}) {
     .map(id => recordMap.get(id));
 
   const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
+
+  const labelField = settings.mapboxLabelField || activeTable.primaryField
 
   return (
     <>
@@ -149,7 +151,8 @@ function App({activeView, settings}) {
         <MapBox
           accessToken={settings.mapboxAccessToken}
           activeView={activeView}
-          geoJsonColumn={settings.mapboxJsonTitle}
+          geoJsonField={settings.mapboxJsonTitle}
+          labelField={labelField}
           map={map}
           records={records}
           selectRecord={(id) => setCurrentRecordIds([id])}

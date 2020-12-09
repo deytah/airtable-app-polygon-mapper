@@ -13,14 +13,14 @@ import {
 import {useSettings, ConfigKeys} from '../hooks/settings';
 
 function SettingsForm({setIsSettingsOpen}) {
-    const globalConfig = useGlobalConfig();
+    // const globalConfig = useGlobalConfig();
     const {
         isValid,
         message,
-        settings: {mapboxAccessToken, mapboxJsonTitle},
+        // settings: {mapboxAccessToken, mapboxJsonTitle},
     } = useSettings();
 
-    const canUpdateSettings = globalConfig.hasPermissionToSet();
+    // const canUpdateSettings = globalConfig.hasPermissionToSet();
 
     return (
         <Box
@@ -43,11 +43,19 @@ function SettingsForm({setIsSettingsOpen}) {
                   />
                 </FormField>
                 <FormField
-                  label="GeoJSON Column Name"
+                  label="GeoJSON Field Name"
                   description="Must be the same for all tables."
                 >
                   <InputSynced
                     globalConfigKey={ConfigKeys.MAPBOX_JSON_TITLE}
+                  />
+                </FormField>
+                <FormField
+                  label="Label Field Name (Defaults to the primary field.)"
+                  description="Must be the same for all tables."
+                >
+                  <InputSynced
+                    globalConfigKey={ConfigKeys.MAPBOX_LABEL_FIELD}
                   />
                 </FormField>
             </Box>
