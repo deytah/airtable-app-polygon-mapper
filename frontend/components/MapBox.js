@@ -189,6 +189,14 @@ const MapBox = ({
         // .addTo(map);
       });
 
+      map.on('click', function(e) {
+        const features = map.queryRenderedFeatures(e.point, {layers: ['places-fill']});
+        const isActive = polygonEditor.isActive(map);
+        if (!isActive && features.length === 0) {
+          selectRecord()
+        }
+      });
+
       const labelsDebounce = debounce(() => updateMapPolygons(map), 500);
       map.on('sourcedata', (e) => {
         if (e.sourceId === 'labels') {

@@ -56,6 +56,7 @@ export const polygonEditor = {
   add: draw.add,
   get,
   init,
+  isActive: (map) => map.hasControl(draw),
   isDirty: () => dirty,
   reset,
   saved: () => dirty = false,
