@@ -7,16 +7,22 @@ import * as geojsonBounds from "geojson-bounds";
  * @param features geoJSON[]
  */
 export default function zoomSelected(map, selectedRecordIds, features) {
-  if(selectedRecordIds.length === 0 && features.length === 0) {
+  if (selectedRecordIds.length === 0 && features.length === 0) {
     return;
   }
 
   let base;
 
   if (selectedRecordIds.length !== 0) {
-    const selection = selectedRecordIds.map(id => {
-      return features.reduce((c, feature) => feature.id === id ? feature : c, null)
-    });
+    let selection = selectedRecordIds
+      .map(id => {
+        return features.reduce((c, feature) => feature.id === id ? feature : c, null)
+      })
+      .filter(feature => !!feature);
+
+    if (selection.length === 0) {
+      selection = features;
+    }
 
     if (selection.length === 1) {
       base = selection[0];

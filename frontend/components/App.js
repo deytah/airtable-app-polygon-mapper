@@ -68,7 +68,9 @@ function App({activeView, settings}) {
   const recordMap = new Map();
   records.forEach(record => recordMap.set(record.id, record));
 
-  const selectedRecords = currentRecordIds.map(id => recordMap.get(id));
+  const selectedRecords = currentRecordIds
+    .filter(id => recordMap.has(id))
+    .map(id => recordMap.get(id));
 
   const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
 
@@ -164,7 +166,7 @@ function App({activeView, settings}) {
         height="100px"
         overflow="hidden"
       >
-        {currentRecordIds.length === 0 ? (
+        {selectedRecords.length === 0 ? (
         <Text
           display="flex"
           alignItems="center"
