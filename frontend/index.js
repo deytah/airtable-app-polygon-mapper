@@ -11,7 +11,7 @@ import {useSettings} from './hooks/settings';
 import SettingsForm from './components/SettingsForm';
 
 function AddSettingsButton({toggleOpen}) {
-  useSettingsButton(() => toggleOpen);
+  useSettingsButton(() => toggleOpen());
   return '';
 }
 
