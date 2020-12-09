@@ -1,4 +1,10 @@
 export default function addHover(map) {
+  const filter = [
+    'all',
+    ['==', 'invisible', false],
+    ["==", "id", ""]
+  ];
+
   // Hover Layer
   map.addLayer({
     'id': 'places-hover',
@@ -14,19 +20,27 @@ export default function addHover(map) {
       ],
       'fill-opacity': 0.85
     },
-    'filter': ["==", "id", ""],
+    'filter': [
+      'all',
+      ['==', 'invisible', false],
+      ["==", "id", ""]
+    ],
   }, 'labels-text');
 
   // Change the cursor to a pointer when the mouse is over the places layer.
   // Apply hover filter
   map.on('mousemove', 'places-fill', function (e) {
-    map.getCanvas().style.cursor = 'pointer';
-    map.setFilter('places-hover', ["==", "id", e.features[0].properties.id]);
+    if (!e.features[0].properties.invisible) {
+      map.getCanvas().style.cursor = 'pointer';
+    }
+    filter[2][2] = e.features[0].properties.id;
+    map.setFilter('places-hover', filter);
   });
 
   // Change it back to a pointer when it leaves.
   map.on('mouseleave', 'places-fill', function () {
     map.getCanvas().style.cursor = '';
-    map.setFilter('places-hover', ["==", "id", ""]);
+    filter[2][2] = '';
+    map.setFilter('places-hover', filter);
   });
 }

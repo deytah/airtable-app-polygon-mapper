@@ -30,7 +30,12 @@ function MapboxViewer() {
   // Load the block
   return (
       <>
-        <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+        <link
+          rel="stylesheet"
+          href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.0/mapbox-gl-draw.css"
+          type="text/css"
+        />
         {canUpdate && (
           <AddSettingsButton toggleOpen={() => setIsSettingsOpen(!isSettingsOpen)}/>
         )}

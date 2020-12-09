@@ -1,11 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef, useState} from 'react';
 import {Box, Text} from '@airtable/blocks/ui';
 
-import * as geojsonBounds from 'geojson-bounds';
 import mapboxgl from 'mapbox-gl';
 
 import findPoint from '../lib/findPoint';
 import debounce from '../lib/debounce';
+import {polygonEditor} from "../lib/polygonEditor";
 
 import addClustering from '../map/addClustering';
 import addHover from "../map/addHover";
@@ -16,6 +17,7 @@ import zoomSelected from '../map/zoomSelected';
 const MapBox = ({
                   accessToken,
                   activeView,
+                  editMode,
                   geoJsonField,
                   labelField,
                   map,
@@ -39,6 +41,7 @@ const MapBox = ({
 
   function parseFeatures() {
     const jsonErrorRecords = [];
+    const selectedIds = selectedRecordIds.length === 1 && editMode ? selectedRecordIds : [];
     const newFeatures = records.filter(record => record.getCellValue(geoJsonField)).map(record => {
       try {
         const source = {
@@ -48,7 +51,8 @@ const MapBox = ({
           properties: {
             id: record.id,
             name: record.getCellValueAsString(labelField),
-            selected: selectedRecordIds.includes(record.id)
+            selected: selectedRecordIds.includes(record.id),
+            invisible: selectedIds.includes(record.id),
           }
         };
 
@@ -61,7 +65,7 @@ const MapBox = ({
               source.properties.color = color;
             }
           } catch (e) {
-            null
+            // Silently fail to use default layer color
           }
         }
         return source;
@@ -71,9 +75,11 @@ const MapBox = ({
         return null;
       }
     }).filter(r => r !== null);
+
     if (JSON.stringify(newFeatures) !== JSON.stringify(features)) {
       setFeatures(newFeatures);
     }
+
     setJsonErrorRecords(jsonErrorRecords);
   }
 
@@ -96,8 +102,27 @@ const MapBox = ({
   useEffect(() => {
     if (initialized) {
       zoomSelected(map, selectedRecordIds, features);
+
+      if (selectedRecordIds.length === 1 && editMode) {
+        try {
+          polygonEditor.toggle(map, true);
+          const record = records.find(r => r.id === selectedRecordIds[0])
+          const feature = {
+            id: Date.now(),
+            type: 'Feature',
+            properties: {},
+            geometry: JSON.parse(record.getCellValueAsString(geoJsonField))
+          }
+          polygonEditor.add(feature);
+        } catch (e) {
+          // Most likely bad JSON
+          polygonEditor.toggle(map, false);
+        }
+      } else {
+        polygonEditor.toggle(map, false);
+      }
     }
-  }, [selectedRecordIds]);
+  }, [editMode, selectedRecordIds]);
 
   useEffect(() => {
     if (initialized) {
@@ -107,7 +132,7 @@ const MapBox = ({
 
   useEffect(() => {
     parseFeatures();
-  }, [records]);
+  }, [editMode, records, selectedRecordIds]);
 
   // Initialize map when component mounts
   useEffect(() => {
@@ -122,10 +147,12 @@ const MapBox = ({
     // Map controls
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
     map.on('move', () => {
-      setLng(map.getCenter().lng.toFixed(4));
-      setLat(map.getCenter().lat.toFixed(4));
-      setZoom(map.getZoom().toFixed(2));
+      setLng(+(map.getCenter().lng.toFixed(4)));
+      setLat(+(map.getCenter().lat.toFixed(4)));
+      setZoom(+(map.getZoom().toFixed(2)));
     });
+
+    polygonEditor.init(map);
 
     // Draw polygons
     map.on('load', function () {
@@ -154,10 +181,6 @@ const MapBox = ({
       // location of the click, with description HTML from its properties.
       map.on('click', 'places-fill', function (e) {
         selectRecord(e.features[0].properties.id);
-
-        map.fitBounds(geojsonBounds.extent(e.features[0]), {
-          padding: 20,
-        });
 
         // Popup Tooltip
         // new mapboxgl.Popup()
@@ -190,13 +213,17 @@ const MapBox = ({
   }, []);
 
   function updateMapPolygons(map) {
-    const features = map.querySourceFeatures('labels', {sourceLayer: 'labels-text'})
-      .filter(feature => !feature.id)
-      .map(f => JSON.parse(f.properties.original));
-    map.getSource('places').setData({
-      type: 'FeatureCollection',
-      features
-    });
+    try {
+      const features = map.querySourceFeatures('labels', {sourceLayer: 'labels-text'})
+        .filter(feature => !feature.id)
+        .map(f => JSON.parse(f.properties.original));
+      map.getSource('places').setData({
+        type: 'FeatureCollection',
+        features
+      });
+    } catch (e) {
+      // Catch the odd disappearing map
+    }
   }
 
   // Update FeatureCollection data

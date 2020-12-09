@@ -23,7 +23,8 @@
   "bugs": "https://github.com/deytah/airtable-app-mapbox/issues",
   "dependencies": {
     "@airtable/blocks": "1.2.0",
-    "d3": "^6.2.0",
+    "@mapbox/mapbox-gl-draw": "github:deytah/mapbox-gl-draw",
+    "d3": "^6.3.1",
     "geojson-bounds": "^1.0.2",
     "mapbox-gl": "^2.0.0",
     "mapbox-print-pdf": "github:vinayakkulkarni/mapbox-print-pdf",

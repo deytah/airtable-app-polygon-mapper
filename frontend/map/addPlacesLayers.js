@@ -23,6 +23,7 @@ export default function addPlacesLayers(map) {
         0.3 // Default
       ]
     },
+    'filter': ['==', 'invisible', false],
   });
 
   map.addLayer({
@@ -37,8 +38,9 @@ export default function addPlacesLayers(map) {
         ['get', 'color'],
         '#627BC1'
       ],
-      'line-width': 2
+      'line-width': 2,
     },
+    'filter': ['==', 'invisible', false],
   });
 
 }

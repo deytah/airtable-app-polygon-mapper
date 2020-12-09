@@ -16,6 +16,7 @@ import {
 import MapBox from './MapBox';
 import RecordErrorDialog from './RecordErrorDialog';
 import SaveMapDialog from './SaveMapDialog';
+import {polygonEditor} from "../lib/polygonEditor";
 
 // Switch options
 const appMode = [
@@ -40,7 +41,8 @@ function App({activeTable, activeView, settings}) {
   };
 
   // States
-  const [currentRecordIds, setCurrentRecordIds] = useState(cursor.selectedRecordIds);
+  const [currentRecordIds, setCurrentRecordIds] = useState([]);
+  const [potentialSelection, setPotentialSelection] = useState([]);
   const [showBackground, setShowBackground] = useState(sessionPrefs.showBackground);
   const [showConditions, setShowConditions] = useState(sessionPrefs.showConditions);
   const [editMode, setEditMode] = useState(false);
@@ -51,7 +53,7 @@ function App({activeTable, activeView, settings}) {
 
   // Watch
   useWatchable(cursor, 'selectedRecordIds', () => {
-    setCurrentRecordIds(cursor.selectedRecordIds);
+    setPotentialSelection(cursor.selectedRecordIds);
   });
 
   // Update session storage with user choices
@@ -75,7 +77,26 @@ function App({activeTable, activeView, settings}) {
 
   const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
 
-  const labelField = settings.mapboxLabelField || activeTable.primaryField
+  const labelField = settings.mapboxLabelField || activeTable.primaryField;
+
+  useEffect(() => {
+    if (JSON.stringify(currentRecordIds) !== JSON.stringify(potentialSelection) &&
+      (!editMode || !polygonEditor.isDirty() || confirm('You have unsaved changes. Lose them?'))
+    ) {
+      if (editMode) polygonEditor.reset(map);
+      setCurrentRecordIds(potentialSelection);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [potentialSelection]);
+
+  function onSave() {
+    if (map) {
+      const values = {};
+      values[settings.mapboxJsonTitle] = JSON.stringify(polygonEditor.get());
+      polygonEditor.saved();
+      activeTable.updateRecordAsync(selectedRecords[0].id, values).then();
+    }
+  }
 
   return (
     <>
@@ -131,7 +152,7 @@ function App({activeTable, activeView, settings}) {
         </Box>
         {editMode ? (
           <Button
-            onClick={() => console.log('Button clicked')}
+            onClick={() => onSave()}
             size="small"
             icon="upload"
           >
@@ -151,11 +172,12 @@ function App({activeTable, activeView, settings}) {
         <MapBox
           accessToken={settings.mapboxAccessToken}
           activeView={activeView}
+          editMode={editMode}
           geoJsonField={settings.mapboxJsonTitle}
           labelField={labelField}
           map={map}
           records={records}
-          selectRecord={(id) => setCurrentRecordIds([id])}
+          selectRecord={(id) => setPotentialSelection([id])}
           selectedRecordIds={currentRecordIds}
           setJsonErrorRecords={(ids) => {
             if (jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
