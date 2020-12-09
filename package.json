@@ -18,14 +18,15 @@
       "url": "https://github.com/skeemer"
     }
   ],
+  "license": "See LICENSE.md",
   "repository": "https://github.com/deytah/airtable-app-mapbox",
   "bugs": "https://github.com/deytah/airtable-app-mapbox/issues",
   "dependencies": {
     "@airtable/blocks": "1.2.0",
     "d3": "^6.2.0",
     "geojson-bounds": "^1.0.2",
-    "mapbox-gl": "^1.13.0",
-    "mapbox-print-pdf": "git+https://github.com/vinayakkulkarni/mapbox-print-pdf.git",
+    "mapbox-gl": "^2.0.0",
+    "mapbox-print-pdf": "github:vinayakkulkarni/mapbox-print-pdf",
     "polylabel": "^1.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
