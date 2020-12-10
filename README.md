@@ -1,6 +1,6 @@
 # Map Viewer for Airtable
 
-Map Viewer uses Mapbox to render GeoJSON stored in Airtable as shapes.
+Map Viewer uses Mapbox to render GeoJSON stored in Airtable. As an Airtable Editor or higher, you can also draw new polygons and edit existing ones.
 
 ## Requirements
 
@@ -18,11 +18,18 @@ To **run** this app, you will need:
 To remix this app as a Custom App:
 1. Create a new base or use an existing one.
 2. Create a new app in your base, selecting "Remix from GitHub" as your template.
-3. Follow the steps in [Airtable's "Remix from GitHub" guide](https://airtable.com/developers/apps/guides/remix-from-github).
-4. From the root of your new block, run `block run`.
-5. Run `block release` to publish the app to Airtable's servers so that all collaborators can use it.
+3. In "GitHub Repository" paste: https://github.com/deytah/airtable-app-mapbox
+4. Follow the steps in [Airtable's "Remix from GitHub" guide](https://airtable.com/developers/apps/guides/remix-from-github).
 
 _Note: Custom Apps are only available to Base Collaborators. "Share via Base Link" viewers will not be able to use the app._
+
+### Local Development
+
+Use `block run` to start the app.
+
+Use `block release` to publish the app to Airtable's servers so that all collaborators in the base can use it.
+
+If you want to run the app in more than one base, you will need remotes to run and release your app. Follow the steps in [Airtable's "Run and release an app in multiple bases" guide](https://airtable.com/developers/apps/guides/run-in-multiple-bases).
 
 ## Getting Started
 
@@ -130,7 +137,7 @@ These terms supplement your other agreements with Airtable, which may include th
 
 By using the Software, you accept and agree to abide by these terms.
 
-### Mapbox Web SDK ([mapbox/mapbox-gl-js](https://github.com/mapbox/mapbox-gl-js))
+### Mapbox Web SDK ([mapbox/mapbox-gl-js](https://github.com/mapbox/mapbox-gl-js#license))
 
 Mapbox gl-js version 2.0 or higher (“Mapbox Web SDK”) must be used according to the Mapbox Terms of Service. This license allows developers with a current active Mapbox account to use and modify the Mapbox Web SDK. Developers may modify the Mapbox Web SDK code so long as the modifications do not change or interfere with marked portions of the code related to billing, accounting, and anonymized data collection. The Mapbox Web SDK only sends anonymized usage data, which Mapbox uses for fixing bugs and errors, accounting, and generating aggregated anonymized statistics. This license terminates automatically if a user no longer has an active Mapbox account.
 
