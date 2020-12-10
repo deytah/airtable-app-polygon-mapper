@@ -60,7 +60,7 @@ function SettingsForm({setIsSettingsOpen}) {
         <Heading marginBottom={3}>Settings</Heading>
         <FormField
           label="Mapbox Public Access Token"
-          description="Available at https://account.mapbox.com/"
+          description="Available in your Mapbox Account: https://account.mapbox.com/"
         >
           <InputSynced
             globalConfigKey={ConfigKeys.MAPBOX_ACCESS_TOKEN}
@@ -68,30 +68,26 @@ function SettingsForm({setIsSettingsOpen}) {
         </FormField>
         <FormField
           label="Geometry Field Name"
-          description='Must be the same for all tables. This is the "geometry" part of a GeoJSON feature.'
+          description='Must be the same for all tables. This is the "geometry" part of a GeoJSON feature. Currently supports Polygon and MultiPolygon geometry types.'
         >
           <InputSynced
             globalConfigKey={ConfigKeys.GEOMETRY_FIELD}
           />
         </FormField>
         <FormField
-          label="Label Field Name (Defaults to the primary field.)"
-          description="Must be the same for all tables."
+          label="Label Field Name"
+          description="Must be the same for all tables. Defaults to your table's primary field."
         >
           <InputSynced
             globalConfigKey={ConfigKeys.LABEL_FIELD}
           />
         </FormField>
-
-        <Heading marginBottom={3} size={"small"}>Placed Images</Heading>
-
-        <FormField>
-          <Switch label={'Enable'} value={imagesEnabled} onChange={v => setImagesEnabled(v)}/>
-        </FormField>
+        <Switch label={'Use background images'} value={imagesEnabled} onChange={v => setImagesEnabled(v)} marginBottom={3}/>
         {imagesEnabled && (<>
+          <Text variant="paragraph">Configure raster sources for your map composed of  images. Each image is paired with GeoJSON geometry to place it on the map. You can use background images as references when drawing new features.</Text>
           <FormField
             label="Table"
-            description="Set to none to disable."
+            description="Select the table containing the background images."
           >
             <TablePickerSynced
               globalConfigKey={ConfigKeys.IMAGES_TABLE}
@@ -100,7 +96,7 @@ function SettingsForm({setIsSettingsOpen}) {
           {images.table && (<>
             <FormField
               label="Images Field"
-              description="Must be the same for all tables."
+              description="Select the field containing the background images."
             >
               <FieldPickerSynced
                 table={table}
@@ -110,7 +106,7 @@ function SettingsForm({setIsSettingsOpen}) {
             </FormField>
             <FormField
               label="Geometry Field"
-              description="Must be the same for all tables."
+              description="Select the field containing the geometry to position your background images."
             >
               <FieldPickerSynced
                 table={table}

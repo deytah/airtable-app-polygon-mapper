@@ -56,10 +56,10 @@ function getSettingsValidationResult(base, settings) {
             message = 'Selected field for images does not exist.';
         } else if (!images.geometryField) {
             isValid = false;
-            message = 'No field selected for images\' geometry.';
+            message = 'No field selected for image geometry.';
         } else if (!table.getFieldByIdIfExists(images.geometryField)) {
             isValid = false;
-            message = 'Selected field for images\' geometry does not exist.';
+            message = 'Selected field for image geometry does not exist.';
         }
     }
 
