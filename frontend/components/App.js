@@ -10,7 +10,8 @@ import {
   RecordCardList,
   SelectButtons,
   Switch,
-  Text
+  Text,
+  Tooltip
 } from '@airtable/blocks/ui';
 
 import MapBox from './MapBox';
@@ -154,7 +155,8 @@ function App({activeTable, activeView, settings}) {
           <Button
             onClick={() => onSave()}
             size="small"
-            icon="upload"
+            icon="plusFilled"
+            variant="primary"
           >
             Save
           </Button>
@@ -163,6 +165,7 @@ function App({activeTable, activeView, settings}) {
             onClick={() => setIsSaveDialogOpen(true)}
             size="small"
             icon="download"
+            variant="primary"
           >
             PDF
           </Button>
