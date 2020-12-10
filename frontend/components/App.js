@@ -36,14 +36,14 @@ function App({activeTable, activeView, settings}) {
   const sessionPrefs = (
     sessionStorage.getItem(sessionPrefsKey) && JSON.parse(sessionStorage.getItem(sessionPrefsKey))
   ) || { // Defaults
-    showBackground: false,
+    showBackgrounds: false,
     showConditions: true
   };
 
   // States
   const [currentRecordIds, setCurrentRecordIds] = useState([]);
   const [potentialSelection, setPotentialSelection] = useState([]);
-  const [showBackground, setShowBackground] = useState(sessionPrefs.showBackground);
+  const [showBackgrounds, setShowBackgrounds] = useState(sessionPrefs.showBackgrounds);
   const [showConditions, setShowConditions] = useState(sessionPrefs.showConditions);
   const [editMode, setEditMode] = useState(false);
   const [jsonErrorRecordIds, setJsonErrorRecordIds] = useState([]);
@@ -59,11 +59,11 @@ function App({activeTable, activeView, settings}) {
   // Update session storage with user choices
   useEffect(() => {
     sessionStorage.setItem(sessionPrefsKey, JSON.stringify({
-      showBackground,
+      showBackgrounds,
       showConditions
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showBackground, showConditions]);
+  }, [showBackgrounds, showConditions]);
 
   // Data
   const records = useRecords(activeView);
@@ -76,8 +76,6 @@ function App({activeTable, activeView, settings}) {
     .map(id => recordMap.get(id));
 
   const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
-
-  const labelField = settings.mapboxLabelField || activeTable.primaryField;
 
   useEffect(() => {
     if (JSON.stringify(currentRecordIds) !== JSON.stringify(potentialSelection) &&
@@ -92,7 +90,7 @@ function App({activeTable, activeView, settings}) {
   function onSave() {
     if (map) {
       const values = {};
-      values[settings.mapboxJsonTitle] = JSON.stringify(polygonEditor.get());
+      values[settings.geometryField] = JSON.stringify(polygonEditor.get());
       polygonEditor.saved();
       activeTable.updateRecordAsync(selectedRecords[0].id, values).then();
     }
@@ -134,14 +132,16 @@ function App({activeTable, activeView, settings}) {
               marginRight={2}
             />
           )}
-          <Switch
-            value={showBackground}
-            onChange={newValue => setShowBackground(newValue)}
-            label="Background"
-            size="small"
-            width="auto"
-            marginRight={2}
-          />
+          {settings.images.table && (
+            <Switch
+              value={showBackgrounds}
+              onChange={newValue => setShowBackgrounds(newValue)}
+              label="Background"
+              size="small"
+              width="auto"
+              marginRight={2}
+            />
+          )}
           <Switch
             value={showConditions}
             onChange={newValue => setShowConditions(newValue)}
@@ -170,11 +170,9 @@ function App({activeTable, activeView, settings}) {
       </Box>
       <Box position="relative" flexGrow={1}>
         <MapBox
-          accessToken={settings.mapboxAccessToken}
+          activeTable={activeTable}
           activeView={activeView}
           editMode={editMode}
-          geoJsonField={settings.mapboxJsonTitle}
-          labelField={labelField}
           map={map}
           records={records}
           selectRecord={(id) => setPotentialSelection([id])}
@@ -183,6 +181,7 @@ function App({activeTable, activeView, settings}) {
             if (jsonErrorRecordIds.join(',') !== ids.join(',')) setJsonErrorRecordIds(ids);
           }}
           setMap={setMap}
+          showBackgrounds={showBackgrounds}
           showColors={showConditions}
         />
       </Box>

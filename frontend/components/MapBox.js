@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef, useState} from 'react';
-import {Box, Text} from '@airtable/blocks/ui';
+import {Box, Text, useBase, useRecords} from '@airtable/blocks/ui';
 
 import mapboxgl from 'mapbox-gl';
 
@@ -13,23 +13,25 @@ import addHover from "../map/addHover";
 import addPlacesLayers from "../map/addPlacesLayers";
 import addSources from "../map/addSources";
 import zoomSelected from '../map/zoomSelected';
+import {useSettings} from "../hooks/settings";
+import {removeImageSources, updateImageSources} from "../map/addImagesSources";
 
 const MapBox = ({
-                  accessToken,
+                  // properties
+                  activeTable,
                   activeView,
                   editMode,
-                  geoJsonField,
-                  labelField,
                   map,
                   records,
                   selectedRecordIds,
+                  showBackgrounds,
+                  showColors,
+
+                  // functions
                   selectRecord,
                   setJsonErrorRecords,
                   setMap,
-                  showColors
                 }) => {
-
-  mapboxgl.accessToken = accessToken;
 
   const mapContainerRef = useRef(null);
 
@@ -39,14 +41,19 @@ const MapBox = ({
   const [lat, setLat] = useState(38);
   const [zoom, setZoom] = useState(1);
 
+  const {settings} = useSettings();
+  const geometryField = settings.geometryField;
+  const labelField = settings.labelField || activeTable.primaryField;
+  mapboxgl.accessToken = settings.mapboxAccessToken;
+
   function parseFeatures() {
     const jsonErrorRecords = [];
     const selectedIds = selectedRecordIds.length === 1 && editMode ? selectedRecordIds : [];
-    const newFeatures = records.filter(record => record.getCellValue(geoJsonField)).map(record => {
+    const newFeatures = records.filter(record => record.getCellValue(geometryField)).map(record => {
       try {
         const source = {
           type: 'Feature',
-          geometry: JSON.parse(record.getCellValueAsString(geoJsonField) || null),
+          geometry: JSON.parse(record.getCellValueAsString(geometryField) || null),
           id: record.id,
           properties: {
             id: record.id,
@@ -106,13 +113,13 @@ const MapBox = ({
       if (selectedRecordIds.length === 1 && editMode) {
         try {
           polygonEditor.toggle(map, true);
-          const record = records.find(r => r.id === selectedRecordIds[0])
+          const record = records.find(r => r.id === selectedRecordIds[0]);
           const feature = {
             id: Date.now(),
             type: 'Feature',
             properties: {},
-            geometry: JSON.parse(record.getCellValueAsString(geoJsonField) || null)
-          }
+            geometry: JSON.parse(record.getCellValueAsString(geometryField) || null)
+          };
           if (feature.geometry) {
             polygonEditor.add(feature);
           }
@@ -191,11 +198,11 @@ const MapBox = ({
         // .addTo(map);
       });
 
-      map.on('click', function(e) {
+      map.on('click', function (e) {
         const features = map.queryRenderedFeatures(e.point, {layers: ['places-fill']});
         const isActive = polygonEditor.isActive(map);
         if (!isActive && features.length === 0) {
-          selectRecord()
+          selectRecord();
         }
       });
 
@@ -219,7 +226,7 @@ const MapBox = ({
     return () => {
       map.remove();
       setMap(null);
-    }
+    };
   }, []);
 
   function updateMapPolygons(map) {
@@ -255,7 +262,7 @@ const MapBox = ({
   // Observe features for record changes
   useEffect(() => {
     updateMap();
-  }, [features, map])
+  }, [features, map]);
 
   return (
     <>
@@ -282,8 +289,37 @@ const MapBox = ({
           left: 0,
           right: 0,
         }}/>
+      {settings.images.table && initialized && (
+        <ImageSourceRecords map={map} settings={settings.images} show={showBackgrounds}/>
+      )}
     </>
   );
 };
+
+function ImageSourceRecords({map, settings, show}) {
+  const [sourceRecords, setSourceRecords] = useState([]);
+  const base = useBase();
+  const table = base.getTableById(settings.table);
+  const records = useRecords(table);
+
+  useEffect(() => {
+    if (
+      JSON.stringify(sourceRecords.map(r => r.toString())) !==
+      JSON.stringify(records.map(r => r.toString()))
+    ) {
+      setSourceRecords(records);
+    }
+  }, [records]);
+
+  useEffect(() => {
+    if (show) {
+      updateImageSources(map, records, settings);
+    } else {
+      removeImageSources(map);
+    }
+  }, [show, sourceRecords]);
+
+  return (<></>);
+}
 
 export default MapBox;

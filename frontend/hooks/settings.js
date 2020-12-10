@@ -2,39 +2,65 @@ import {useBase, useGlobalConfig} from '@airtable/blocks/ui';
 
 export const ConfigKeys = {
     MAPBOX_ACCESS_TOKEN: 'mapboxAccessToken',
-    MAPBOX_JSON_TITLE: 'mapboxJsonTitle',
-    MAPBOX_LABEL_FIELD: 'mapboxLabelField',
+    GEOMETRY_FIELD: 'mapboxJsonTitle',
+    LABEL_FIELD: 'mapboxLabelField',
+    IMAGES_FIELD: 'mapboxImagesField',
+    IMAGES_GEOMETRY_FIELD: 'mapboxImagesGeometryField',
+    IMAGES_TABLE: 'mapboxImagesTable',
 };
 
 function getSettings(globalConfig) {
-    const mapboxAccessToken = globalConfig.get(ConfigKeys.MAPBOX_ACCESS_TOKEN);
-    const mapboxJsonTitle = globalConfig.get(ConfigKeys.MAPBOX_JSON_TITLE);
-    const mapboxLabelField = globalConfig.get(ConfigKeys.MAPBOX_LABEL_FIELD);
-
     return {
-        mapboxAccessToken,
-        mapboxJsonTitle,
-        mapboxLabelField,
+        mapboxAccessToken: globalConfig.get(ConfigKeys.MAPBOX_ACCESS_TOKEN),
+        geometryField: globalConfig.get(ConfigKeys.GEOMETRY_FIELD),
+        labelField: globalConfig.get(ConfigKeys.LABEL_FIELD),
+        images: {
+            table: globalConfig.get(ConfigKeys.IMAGES_TABLE),
+            geometryField: globalConfig.get(ConfigKeys.IMAGES_GEOMETRY_FIELD),
+            imageField: globalConfig.get(ConfigKeys.IMAGES_FIELD),
+        },
     };
 }
 
-function getSettingsValidationResult(settings) {
+function getSettingsValidationResult(base, settings) {
     const {
       mapboxAccessToken,
-      mapboxJsonTitle
+      geometryField,
+      images,
     } = settings;
 
     let isValid = true;
     let message = null;
     if (!mapboxAccessToken) {
-        // If token is not entered...
+        // If token is not entered
         isValid = false;
         message = 'Please enter your Mapbox Public Access Token';
     }
-    if (!mapboxJsonTitle) {
-        // If GeoJSON field is not entered...
+
+    if (!geometryField) {
+        // If GeoJSON field is not entered
         isValid = false;
         message = 'Please enter where your GeoJSON is stored.';
+    }
+
+    if (images.table) {
+        const table = base.getTableByIdIfExists(images.table);
+        if (!table) {
+            isValid = false;
+            message = 'Invalid table selected for images.';
+        } else if (!images.imageField) {
+            isValid = false;
+            message = 'No field selected for images.';
+        } else if (!table.getFieldByIdIfExists(images.imageField)) {
+            isValid = false;
+            message = 'Selected field for images does not exist.';
+        } else if (!images.geometryField) {
+            isValid = false;
+            message = 'No field selected for images\' geometry.';
+        } else if (!table.getFieldByIdIfExists(images.geometryField)) {
+            isValid = false;
+            message = 'Selected field for images\' geometry does not exist.';
+        }
     }
 
     return {
@@ -48,5 +74,5 @@ export function useSettings() {
     const base = useBase();
     const globalConfig = useGlobalConfig();
     const settings = getSettings(globalConfig, base);
-    return getSettingsValidationResult(settings);
+    return getSettingsValidationResult(base, settings);
 }
