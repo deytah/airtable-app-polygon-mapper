@@ -16,7 +16,7 @@ function getSettings(globalConfig) {
         labelField: globalConfig.get(ConfigKeys.LABEL_FIELD),
         images: {
             table: globalConfig.get(ConfigKeys.IMAGES_TABLE),
-            geometryField: globalConfig.get(ConfigKeys.GEOMETRY_FIELD),
+            geometryField: globalConfig.get(ConfigKeys.IMAGES_GEOMETRY_FIELD),
             imageField: globalConfig.get(ConfigKeys.IMAGES_FIELD),
         },
     };
@@ -44,22 +44,22 @@ function getSettingsValidationResult(base, settings) {
     }
 
     if (images.table) {
-        const table = base.getTableByIdIfExists();
+        const table = base.getTableByIdIfExists(images.table);
         if (!table) {
             isValid = false;
             message = 'Invalid table selected for images.';
         } else if (!images.imageField) {
             isValid = false;
             message = 'No field selected for images.';
-        } else if (!table.getFieldByNameIfExists(images.imageField)) {
+        } else if (!table.getFieldByIdIfExists(images.imageField)) {
             isValid = false;
-            message = 'Selected for images does not exist.';
+            message = 'Selected field for images does not exist.';
         } else if (!images.geometryField) {
             isValid = false;
-            message = 'No field selected for images.';
-        } else if (!table.getFieldByNameIfExists(images.geometryField)) {
+            message = 'No field selected for images\' geometry.';
+        } else if (!table.getFieldByIdIfExists(images.geometryField)) {
             isValid = false;
-            message = 'Selected for images does not exist.';
+            message = 'Selected field for images\' geometry does not exist.';
         }
     }
 
