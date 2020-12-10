@@ -134,22 +134,36 @@ function App({activeTable, activeView, settings}) {
             />
           )}
           {settings.images.table && (
+            <Tooltip
+              content="Toggle image overlays"
+              placementX={Tooltip.placements.CENTER}
+              placementY={Tooltip.placements.BOTTOM}
+              shouldHideTooltipOnClick={true}
+            >
+              <Switch
+                value={showBackgrounds}
+                onChange={newValue => setShowBackgrounds(newValue)}
+                label="Background"
+                size="small"
+                width="auto"
+                marginRight={2}
+              />
+            </Tooltip>
+          )}
+          <Tooltip
+            content="Toggle colors set by Conditions"
+            placementX={Tooltip.placements.CENTER}
+            placementY={Tooltip.placements.BOTTOM}
+            shouldHideTooltipOnClick={true}
+          >
             <Switch
-              value={showBackgrounds}
-              onChange={newValue => setShowBackgrounds(newValue)}
-              label="Background"
+              value={showConditions}
+              onChange={newValue => setShowConditions(newValue)}
+              label="Conditions"
               size="small"
               width="auto"
-              marginRight={2}
             />
-          )}
-          <Switch
-            value={showConditions}
-            onChange={newValue => setShowConditions(newValue)}
-            label="Conditions"
-            size="small"
-            width="auto"
-          />
+          </Tooltip>
         </Box>
         {editMode ? (
           <Button
