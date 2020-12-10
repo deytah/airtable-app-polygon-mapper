@@ -13,23 +13,23 @@ import addHover from "../map/addHover";
 import addPlacesLayers from "../map/addPlacesLayers";
 import addSources from "../map/addSources";
 import zoomSelected from '../map/zoomSelected';
+import {useSettings} from "../hooks/settings";
 
 const MapBox = ({
-                  accessToken,
+                  // properties
+                  activeTable,
                   activeView,
                   editMode,
-                  geoJsonField,
-                  labelField,
                   map,
                   records,
                   selectedRecordIds,
+                  showColors,
+
+                  // functions
                   selectRecord,
                   setJsonErrorRecords,
                   setMap,
-                  showColors
                 }) => {
-
-  mapboxgl.accessToken = accessToken;
 
   const mapContainerRef = useRef(null);
 
@@ -39,14 +39,19 @@ const MapBox = ({
   const [lat, setLat] = useState(38);
   const [zoom, setZoom] = useState(1);
 
+  const {settings} = useSettings();
+  const geometryField = settings.geometryField;
+  const labelField = settings.labelField || activeTable.primaryField;
+  mapboxgl.accessToken = settings.mapboxAccessToken;
+
   function parseFeatures() {
     const jsonErrorRecords = [];
     const selectedIds = selectedRecordIds.length === 1 && editMode ? selectedRecordIds : [];
-    const newFeatures = records.filter(record => record.getCellValue(geoJsonField)).map(record => {
+    const newFeatures = records.filter(record => record.getCellValue(geometryField)).map(record => {
       try {
         const source = {
           type: 'Feature',
-          geometry: JSON.parse(record.getCellValueAsString(geoJsonField) || null),
+          geometry: JSON.parse(record.getCellValueAsString(geometryField) || null),
           id: record.id,
           properties: {
             id: record.id,
@@ -111,7 +116,7 @@ const MapBox = ({
             id: Date.now(),
             type: 'Feature',
             properties: {},
-            geometry: JSON.parse(record.getCellValueAsString(geoJsonField) || null)
+            geometry: JSON.parse(record.getCellValueAsString(geometryField) || null)
           }
           if (feature.geometry) {
             polygonEditor.add(feature);

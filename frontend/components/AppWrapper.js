@@ -34,12 +34,12 @@ function AppWrapper({settings}) {
   const activeTable = base.getTableByIdIfExists(cursor.activeTableId);
   const activeView = activeTable.getViewByIdIfExists(cursor.activeViewId);
 
-  if (activeTable.getFieldByNameIfExists(settings.mapboxJsonTitle) === null) {
-    return Error(`GeoJSON field, “${settings.mapboxJsonTitle}”, does not exist on this table.`)
+  if (activeTable.getFieldByNameIfExists(settings.geometryField) === null) {
+    return Error(`GeoJSON field, “${settings.geometryField}”, does not exist on this table.`)
   }
 
-  if (settings.mapboxLabelField && activeTable.getFieldByNameIfExists(settings.mapboxLabelField) === null) {
-    return Error(`Label field, "${settings.mapboxLabelField}”, does not exist on this table.`)
+  if (settings.labelField && activeTable.getFieldByNameIfExists(settings.labelField) === null) {
+    return Error(`Label field, "${settings.labelField}”, does not exist on this table.`)
   }
 
   return (

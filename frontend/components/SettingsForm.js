@@ -17,7 +17,7 @@ function SettingsForm({setIsSettingsOpen}) {
     const {
         isValid,
         message,
-        // settings: {mapboxAccessToken, mapboxJsonTitle},
+        // settings: {mapboxAccessToken, geometryField},
     } = useSettings();
 
     // const canUpdateSettings = globalConfig.hasPermissionToSet();
@@ -47,7 +47,7 @@ function SettingsForm({setIsSettingsOpen}) {
                   description="Must be the same for all tables."
                 >
                   <InputSynced
-                    globalConfigKey={ConfigKeys.MAPBOX_JSON_TITLE}
+                    globalConfigKey={ConfigKeys.GEOMETRY_FIELD}
                   />
                 </FormField>
                 <FormField
@@ -55,7 +55,7 @@ function SettingsForm({setIsSettingsOpen}) {
                   description="Must be the same for all tables."
                 >
                   <InputSynced
-                    globalConfigKey={ConfigKeys.MAPBOX_LABEL_FIELD}
+                    globalConfigKey={ConfigKeys.LABEL_FIELD}
                   />
                 </FormField>
             </Box>

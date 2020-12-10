@@ -77,7 +77,7 @@ function App({activeTable, activeView, settings}) {
 
   const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
 
-  const labelField = settings.mapboxLabelField || activeTable.primaryField;
+  const labelField = settings.labelField || activeTable.primaryField;
 
   useEffect(() => {
     if (JSON.stringify(currentRecordIds) !== JSON.stringify(potentialSelection) &&
@@ -92,7 +92,7 @@ function App({activeTable, activeView, settings}) {
   function onSave() {
     if (map) {
       const values = {};
-      values[settings.mapboxJsonTitle] = JSON.stringify(polygonEditor.get());
+      values[settings.geometryField] = JSON.stringify(polygonEditor.get());
       polygonEditor.saved();
       activeTable.updateRecordAsync(selectedRecords[0].id, values).then();
     }
@@ -170,11 +170,9 @@ function App({activeTable, activeView, settings}) {
       </Box>
       <Box position="relative" flexGrow={1}>
         <MapBox
-          accessToken={settings.mapboxAccessToken}
+          activeTable={activeTable}
           activeView={activeView}
           editMode={editMode}
-          geoJsonField={settings.mapboxJsonTitle}
-          labelField={labelField}
           map={map}
           records={records}
           selectRecord={(id) => setPotentialSelection([id])}
