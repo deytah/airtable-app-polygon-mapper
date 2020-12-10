@@ -35,11 +35,7 @@ function AppWrapper({settings}) {
   const activeView = activeTable.getViewByIdIfExists(cursor.activeViewId);
 
   if (activeTable.getFieldByNameIfExists(settings.geometryField) === null) {
-    return Error(`GeoJSON field, “${settings.geometryField}”, does not exist on this table.`)
-  }
-
-  if (settings.labelField && activeTable.getFieldByNameIfExists(settings.labelField) === null) {
-    return Error(`Label field, "${settings.labelField}”, does not exist on this table.`)
+    return Error(`Geometry field “${settings.geometryField}” does not exist on this table.`)
   }
 
   return (

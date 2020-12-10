@@ -43,7 +43,8 @@ const MapBox = ({
 
   const {settings} = useSettings();
   const geometryField = settings.geometryField;
-  const labelField = settings.labelField || activeTable.primaryField;
+  const labelField = settings.labelField && activeTable.getFieldByNameIfExists(settings.labelField)
+    ? settings.labelField : activeTable.primaryField;
   mapboxgl.accessToken = settings.mapboxAccessToken;
 
   function parseFeatures() {
