@@ -81,7 +81,7 @@ function App({activeTable, activeView, settings}) {
 
   useEffect(() => {
     if (JSON.stringify(currentRecordIds) !== JSON.stringify(potentialSelection) &&
-      (!editMode || !polygonEditor.isDirty() || confirm('You have unsaved changes. Lose them?'))
+      (!editMode || !polygonEditor.isDirty() || confirm('You have unsaved changes. Would you like to discard them?'))
     ) {
       if (editMode) polygonEditor.reset(map);
       setCurrentRecordIds(potentialSelection);
