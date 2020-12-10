@@ -46,7 +46,7 @@ const MapBox = ({
       try {
         const source = {
           type: 'Feature',
-          geometry: JSON.parse(record.getCellValueAsString(geoJsonField)),
+          geometry: JSON.parse(record.getCellValueAsString(geoJsonField) || null),
           id: record.id,
           properties: {
             id: record.id,
@@ -111,9 +111,11 @@ const MapBox = ({
             id: Date.now(),
             type: 'Feature',
             properties: {},
-            geometry: JSON.parse(record.getCellValueAsString(geoJsonField))
+            geometry: JSON.parse(record.getCellValueAsString(geoJsonField) || null)
           }
-          polygonEditor.add(feature);
+          if (feature.geometry) {
+            polygonEditor.add(feature);
+          }
         } catch (e) {
           // Most likely bad JSON
           polygonEditor.toggle(map, false);
