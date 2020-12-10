@@ -39,7 +39,7 @@ function AppWrapper({settings}) {
   }
 
   return (
-    <ViewportConstraint minSize={{width: 530}}>
+    <ViewportConstraint minSize={{width: 527}}>
       <App
         settings={settings}
         activeTable={activeTable}
