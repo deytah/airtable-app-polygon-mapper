@@ -7,7 +7,7 @@ import * as geojsonBounds from "geojson-bounds";
  * @param features geoJSON[]
  */
 export default function zoomSelected(map, selectedRecordIds, features) {
-  if (selectedRecordIds.length === 0 && features.length === 0) {
+  if (features.length === 0) {
     return;
   }
 
