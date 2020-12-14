@@ -109,7 +109,7 @@ const MapBox = ({
 
   useEffect(() => {
     if (initialized) {
-      zoomSelected(map, selectedRecordIds, features);
+      zoomSelected(map, selectedRecordIds, features, editMode);
 
       if (selectedRecordIds.length === 1 && editMode) {
         try {

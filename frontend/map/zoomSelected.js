@@ -6,7 +6,7 @@ import * as geojsonBounds from "geojson-bounds";
  * @param selectedRecordIds int[]
  * @param features geoJSON[]
  */
-export default function zoomSelected(map, selectedRecordIds, features) {
+export default function zoomSelected(map, selectedRecordIds, features, editMode) {
   if (features.length === 0) {
     return;
   }
@@ -19,6 +19,10 @@ export default function zoomSelected(map, selectedRecordIds, features) {
         return features.reduce((c, feature) => feature.id === id ? feature : c, null)
       })
       .filter(feature => !!feature);
+
+    if (editMode && selection.length === 0 && selectedRecordIds.length === 1) {
+      return;
+    }
 
     if (selection.length === 0) {
       selection = features;
