@@ -1,6 +1,10 @@
-# Map Viewer for Airtable
+# Polymapper: Display and edit GeoJSON geometry in Airtable
 
-Map Viewer uses Mapbox to render GeoJSON stored in Airtable. As an Airtable Editor or higher, you can also draw new polygons and edit existing ones.
+Using your Airtable records, analyze polygon data points and draw new geometry features.
+
+In View Mode, the app allows you to filter your GeoJSON geometry with Views and apply colors with Conditions. In Draw Mode, you can create new geometry for your records. Optionally, you can georeference background overlays to assist you while drawing new shapes.
+
+Please note that you will need a working Mapbox Public Access Token to use this app.
 
 ## Requirements
 
@@ -11,7 +15,7 @@ To **use** this app, you will need:
 To **run** this app, you will need:
 - an Airtable base
 - a Mapbox Access Token
-- a field in your base with GeoJSON **geometry**, named the exact same across all relevant Tables
+- a field in your base for GeoJSON **geometry**, named the exact same across all relevant Tables
 
 ## Installation
 
