@@ -9,12 +9,12 @@ import debounce from '../lib/debounce';
 import {polygonEditor} from "../lib/polygonEditor";
 
 import addClustering from '../map/addClustering';
-import addHover from "../map/addHover";
-import addPlacesLayers from "../map/addPlacesLayers";
+import {addHover, setHoverFillOpacity} from "../map/addHover";
+import {addPlacesLayers, setPlacesFillOpacity} from "../map/addPlacesLayers";
 import addSources from "../map/addSources";
 import zoomSelected from '../map/zoomSelected';
 import {useSettings} from "../hooks/settings";
-import {removeImageSources, updateImageSources} from "../map/addImagesSources";
+import {removeImageSources, setImageRasterOpacity, updateImageSources} from "../map/addImagesSources";
 
 const MapBox = ({
                   // properties
@@ -143,6 +143,14 @@ const MapBox = ({
   useEffect(() => {
     parseFeatures();
   }, [editMode, records, selectedRecordIds]);
+
+  useEffect(() => {
+    if (map && activeTable) {
+      setPlacesFillOpacity(map, activeTable.id !== settings.images.table);
+      setHoverFillOpacity(map, activeTable.id !== settings.images.table);
+      setImageRasterOpacity(map, activeTable.id !== settings.images.table);
+    }
+  }, [activeTable, map, settings.images.table])
 
   // Initialize map when component mounts
   useEffect(() => {
@@ -291,13 +299,13 @@ const MapBox = ({
           right: 0,
         }}/>
       {settings.images.table && initialized && (
-        <ImageSourceRecords map={map} settings={settings.images} show={showBackgrounds}/>
+        <ImageSourceRecords activeTable={activeTable} map={map} settings={settings.images} show={showBackgrounds}/>
       )}
     </>
   );
 };
 
-function ImageSourceRecords({map, settings, show}) {
+function ImageSourceRecords({activeTable, map, settings, show}) {
   const [sourceRecords, setSourceRecords] = useState([]);
   const base = useBase();
   const table = base.getTableById(settings.table);
@@ -315,6 +323,9 @@ function ImageSourceRecords({map, settings, show}) {
   useEffect(() => {
     if (show) {
       updateImageSources(map, records, settings);
+      if (activeTable) {
+        setImageRasterOpacity(map, activeTable.id !== settings.table);
+      }
     } else {
       removeImageSources(map);
     }

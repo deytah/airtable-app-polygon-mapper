@@ -3,7 +3,14 @@
  *
  * @param map mapboxgl.Map
  */
-export default function addPlacesLayers(map) {
+const placesFill_FillOpacity = [
+  'case',
+  ['get', 'selected'],
+  0.75, // Selected
+  0.3 // Default
+];
+
+export function addPlacesLayers(map) {
   map.addLayer({
     'id': 'places-fill',
     'type': 'fill',
@@ -16,12 +23,7 @@ export default function addPlacesLayers(map) {
         ['get', 'color'],
         '#627BC1'
       ],
-      'fill-opacity': [
-        'case',
-        ['get', 'selected'],
-        0.75, // Selected
-        0.3 // Default
-      ]
+      'fill-opacity': placesFill_FillOpacity,
     },
     'filter': ['==', 'invisible', false],
   });
@@ -42,5 +44,8 @@ export default function addPlacesLayers(map) {
     },
     'filter': ['==', 'invisible', false],
   });
+}
 
+export function setPlacesFillOpacity(map, normal) {
+  map.setPaintProperty('places-fill', 'fill-opacity', normal ? placesFill_FillOpacity : 0);
 }

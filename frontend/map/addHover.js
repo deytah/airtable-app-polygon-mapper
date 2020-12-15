@@ -1,10 +1,12 @@
-export default function addHover(map) {
-  const filter = [
-    'all',
-    ['==', 'invisible', false],
-    ["==", "id", ""]
-  ];
+const filter = [
+  'all',
+  ['==', 'invisible', false],
+  ["==", "id", ""]
+];
 
+const fillOpacity = 0.85;
+
+export function addHover(map) {
   // Hover Layer
   map.addLayer({
     'id': 'places-hover',
@@ -18,7 +20,7 @@ export default function addHover(map) {
         ['get', 'color'],
         '#627BC1'
       ],
-      'fill-opacity': 0.85
+      'fill-opacity': fillOpacity,
     },
     'filter': [
       'all',
@@ -43,4 +45,8 @@ export default function addHover(map) {
     filter[2][2] = '';
     map.setFilter('places-hover', filter);
   });
+}
+
+export function setHoverFillOpacity(map, normal) {
+  map.setPaintProperty('places-hover', 'fill-opacity', normal ? fillOpacity : 0);
 }
