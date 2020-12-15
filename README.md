@@ -1,6 +1,6 @@
-![Polymapper](https://repository-images.githubusercontent.com/314181281/073f7280-3e4b-11eb-8033-d6a7cc4b5515)
+![Polygon Mapper](https://repository-images.githubusercontent.com/314181281/96b14980-3e7c-11eb-89a9-90316cf5a3b5)
 
-# Polymapper
+# Polygon Mapper
 **_Display and edit GeoJSON geometry in Airtable_**
 
 Using your Airtable records, analyze polygon data points and draw new geometry features.

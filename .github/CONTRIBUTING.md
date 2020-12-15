@@ -1,10 +1,10 @@
-# Contributing to Polymapper
+# Contributing to Polygon Mapper
 
-The following is a set of guidelines for contributing to Polymapper, which are hosted in the [Deytah Organization](https://github.com/deytah) on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to Polygon Mapper, which are hosted in the [Deytah Organization](https://github.com/deytah) on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Polymapper Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [support@deytah.io](mailto:support@deytah.io).
+This project and everyone participating in it is governed by the [Polygon Mapper Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [support@deytah.io](mailto:support@deytah.io).
 
 ## What should I know before I get started?
 
@@ -26,7 +26,7 @@ You may submit Pull Requests with the "Bug Fix" template to resolve Bug Reports 
 
 ### Proposing Features / Suggesting Enhancements
 
-Under Issues, use the "Feature Request" template to propose a new feature or suggest an enhancement. 
+Under Issues, use the "Feature Request" template to propose a new feature or suggest an enhancement.
 
 ### Expanding Documentation
 
