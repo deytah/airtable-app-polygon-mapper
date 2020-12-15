@@ -18,7 +18,7 @@ To **run** this app, you will need:
 To remix this app as a Custom App:
 1. Create a new base or use an existing one.
 2. Create a new app in your base, selecting "Remix from GitHub" as your template.
-3. In "GitHub Repository" paste: https://github.com/deytah/airtable-app-mapbox
+3. In "GitHub Repository" paste: `https://github.com/deytah/airtable-app-mapbox`
 4. Follow the steps in [Airtable's "Remix from GitHub" guide](https://airtable.com/developers/apps/guides/remix-from-github).
 
 _Note: Custom Apps are only available to Base Collaborators. "Share via Base Link" viewers will not be able to use the app._
