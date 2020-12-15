@@ -76,6 +76,10 @@ If you are exporting GeoJSON from Thanados:
 - You can use [Thanados GeoJSON to CSV Converter](https://thanados-geojson-to-csv.netlify.app/) to download a CSV and use with the "CSV importer" Airtable app.
 - The Converter will extract the required geometry in the format needed for this app.
 
+### Wiki
+
+Additional documentation and tutorials are available in the [project wiki](https://github.com/deytah/airtable-app-mapbox/wiki).
+
 ## How It Works
 
 In View Mode:
@@ -97,6 +101,8 @@ In Draw Mode:
 - A user can use the Draw tool to create a shape and save the coordinates to the Selected Record.
 - The Draw tool can be used to edit a shape and save new coordinates to the Selected Record.
 - Users can use a background overlay as a reference for creating shapes.
+
+Visit the [project wiki](https://github.com/deytah/airtable-app-mapbox/wiki) for examples and guidance.
 
 ## Limitations and Restrictions
 
