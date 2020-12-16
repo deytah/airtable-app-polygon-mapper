@@ -16,22 +16,22 @@ import zoomSelected from '../map/zoomSelected';
 import {useSettings} from "../hooks/settings";
 import {removeImageSources, setImageRasterOpacity, updateImageSources} from "../map/addImagesSources";
 
-const MapBox = ({
-                  // properties
-                  activeTable,
-                  activeView,
-                  editMode,
-                  map,
-                  records,
-                  selectedRecordIds,
-                  showBackgrounds,
-                  showColors,
+export function MapBox({
+                         // properties
+                         activeTable,
+                         activeView,
+                         editMode,
+                         map,
+                         records,
+                         selectedRecordIds,
+                         showBackgrounds,
+                         showColors,
 
-                  // functions
-                  selectRecord,
-                  setJsonErrorRecords,
-                  setMap,
-                }) => {
+                         // functions
+                         selectRecord,
+                         setJsonErrorRecords,
+                         setMap,
+                       }) {
 
   const mapContainerRef = useRef(null);
 
@@ -335,5 +335,3 @@ function ImageSourceRecords({activeTable, map, settings, show}) {
 
   return (<></>);
 }
-
-export default MapBox;

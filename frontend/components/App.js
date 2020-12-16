@@ -14,7 +14,7 @@ import {
   Tooltip
 } from '@airtable/blocks/ui';
 
-import MapBox from './MapBox';
+import {MapBox} from './MapBox';
 import RecordErrorDialog from './RecordErrorDialog';
 import SaveMapDialog from './SaveMapDialog';
 import {polygonEditor} from "../lib/polygonEditor";
