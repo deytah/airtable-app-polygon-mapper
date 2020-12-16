@@ -186,6 +186,7 @@ const MapBox = ({
           'text-field': ['get', 'name'],
           'text-variable-anchor': ['center'],
           'text-justify': 'auto',
+          'text-allow-overlap': true,
         },
         'filter': ['!', ['has', 'point_count']],
       });
