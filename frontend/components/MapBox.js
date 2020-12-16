@@ -4,17 +4,24 @@ import {Box, Text, useBase, useRecords} from '@airtable/blocks/ui';
 
 import mapboxgl from 'mapbox-gl';
 
+// Lib functions
 import findPoint from '../lib/findPoint';
 import debounce from '../lib/debounce';
 import {polygonEditor} from "../lib/polygonEditor";
 
+// Custom Hooks
+import {useSettings} from "../hooks/settings";
+
+// Components
+import {RasterOpacityControl} from "./RasterOpacityControl";
+
+// Map functions
 import addClustering from '../map/addClustering';
 import {addHover, setHoverFillOpacity} from "../map/addHover";
+import {removeImageSources, updateImageSources} from "../map/addImagesSources";
 import {addPlacesLayers, setPlacesFillOpacity} from "../map/addPlacesLayers";
 import addSources from "../map/addSources";
 import zoomSelected from '../map/zoomSelected';
-import {useSettings} from "../hooks/settings";
-import {removeImageSources, setImageRasterOpacity, updateImageSources} from "../map/addImagesSources";
 
 export function MapBox({
                          // properties
@@ -148,9 +155,8 @@ export function MapBox({
     if (map && activeTable) {
       setPlacesFillOpacity(map, activeTable.id !== settings.images.table);
       setHoverFillOpacity(map, activeTable.id !== settings.images.table);
-      setImageRasterOpacity(map, activeTable.id !== settings.images.table);
     }
-  }, [activeTable, map, settings.images.table])
+  }, [activeTable, map, settings.images.table]);
 
   // Initialize map when component mounts
   useEffect(() => {
@@ -290,6 +296,7 @@ export function MapBox({
           Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
         </Text>
       </Box>
+      {showBackgrounds && <RasterOpacityControl map={map}/>}
       <div
         className="map-container"
         ref={mapContainerRef}
@@ -305,9 +312,9 @@ export function MapBox({
       )}
     </>
   );
-};
+}
 
-function ImageSourceRecords({activeTable, map, settings, show}) {
+function ImageSourceRecords({map, settings, show}) {
   const [sourceRecords, setSourceRecords] = useState([]);
   const base = useBase();
   const table = base.getTableById(settings.table);
@@ -325,9 +332,6 @@ function ImageSourceRecords({activeTable, map, settings, show}) {
   useEffect(() => {
     if (show) {
       updateImageSources(map, records, settings);
-      if (activeTable) {
-        setImageRasterOpacity(map, activeTable.id !== settings.table);
-      }
     } else {
       removeImageSources(map);
     }

@@ -1,4 +1,5 @@
 const sources = [];
+let rasterOpacity = 0.85;
 
 /**
  * Add image sources to the map.
@@ -27,7 +28,7 @@ export function addImageSources(map, records, settings) {
         id: record.id,
         source: record.id,
         type: 'raster',
-        paint: { 'raster-opacity': 0.85 }
+        paint: { 'raster-opacity': rasterOpacity }
       }, 'places-fill');
 
       sources.push(record.id);
@@ -52,6 +53,10 @@ export function updateImageSources(map, records, settings) {
 }
 
 export function setImageRasterOpacity(map, normal) {
-  console.log(sources);
-  sources.forEach(id => map.setPaintProperty(id, 'raster-opacity', normal ? 0.85 : 0.5));
+  updateOpacity(map, normal ? 0.85 : 0.5);
+}
+
+export function updateOpacity(map, opacity) {
+  rasterOpacity = opacity;
+  sources.forEach(id => map.setPaintProperty(id, 'raster-opacity', opacity));
 }
