@@ -263,7 +263,7 @@ const MapBox = ({
       });
 
       if (!initialized) {
-        zoomSelected(map, selectedRecordIds, features);
+        zoomSelected(map, selectedRecordIds, features, editMode);
         setInitialized(true);
       }
     }
