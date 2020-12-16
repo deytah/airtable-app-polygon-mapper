@@ -9,7 +9,6 @@ export function RasterOpacityControl({map}) {
 
 
   useEffect(() => {
-    console.log('running')
     updateOpacity(map, parseInt(percentage, 10) / 100);
     localStorage.setItem(storageKey, percentage);
   }, [map, percentage]);
