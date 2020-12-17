@@ -52,11 +52,9 @@ export function updateImageSources(map, records, settings) {
   addImageSources(map, records, settings);
 }
 
-export function setImageRasterOpacity(map, normal) {
-  updateOpacity(map, normal ? 0.85 : 0.5);
-}
-
 export function updateOpacity(map, opacity) {
   rasterOpacity = opacity;
-  sources.forEach(id => map.setPaintProperty(id, 'raster-opacity', opacity));
+  if (map) {
+    sources.forEach(id => map.setPaintProperty(id, 'raster-opacity', opacity));
+  }
 }
