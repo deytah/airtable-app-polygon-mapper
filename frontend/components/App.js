@@ -236,7 +236,7 @@ function App({activeTable, activeView, settings}) {
             Select a record from Airtable or a shape on the map.
           </Text>
         ) : (
-          <RecordCardList records={selectedRecords}/>
+          <RecordCardList records={selectedRecords} view={activeView}/>
         )}
       </Box>
       {isErrorDialogOpen && (
