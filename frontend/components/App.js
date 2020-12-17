@@ -14,9 +14,13 @@ import {
   Tooltip
 } from '@airtable/blocks/ui';
 
+// Components
 import {MapBox} from './MapBox';
+import {ChangesConfirmationDialog} from "./ChangesConfirmationDialog";
 import RecordErrorDialog from './RecordErrorDialog';
 import SaveMapDialog from './SaveMapDialog';
+
+// Lib functions
 import {polygonEditor} from "../lib/polygonEditor";
 
 // Switch options
@@ -50,6 +54,7 @@ function App({activeTable, activeView, settings}) {
   const [jsonErrorRecordIds, setJsonErrorRecordIds] = useState([]);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isChangesConfirmationDialogOpen, setIsChangesConfirmationDialogOpen] = useState(false);
   const [map, setMap] = useState(null);
 
   // Watch
@@ -78,12 +83,19 @@ function App({activeTable, activeView, settings}) {
 
   const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
 
+  function updateSelectedRecordsIds() {
+    setIsChangesConfirmationDialogOpen(false);
+    if (editMode) polygonEditor.reset(map);
+    setCurrentRecordIds(potentialSelection);
+  }
+
   useEffect(() => {
-    if (JSON.stringify(currentRecordIds) !== JSON.stringify(potentialSelection) &&
-      (!editMode || !polygonEditor.isDirty() || confirm('You have unsaved changes. Would you like to discard them?'))
-    ) {
-      if (editMode) polygonEditor.reset(map);
-      setCurrentRecordIds(potentialSelection);
+    if (JSON.stringify(currentRecordIds) !== JSON.stringify(potentialSelection)) {
+      if (editMode && polygonEditor.isDirty()) {
+        setIsChangesConfirmationDialogOpen(true);
+      } else {
+        updateSelectedRecordsIds();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [potentialSelection]);
@@ -232,6 +244,11 @@ function App({activeTable, activeView, settings}) {
       )}
       {isSaveDialogOpen && (
         <SaveMapDialog closeDialog={() => setIsSaveDialogOpen(false)} map={map}/>
+      )}
+      {isChangesConfirmationDialogOpen && (
+        <ChangesConfirmationDialog
+          onCancel={() => setIsChangesConfirmationDialogOpen(false)}
+          onConfirm={() => updateSelectedRecordsIds()}/>
       )}
     </>
   );
