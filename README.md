@@ -59,7 +59,7 @@ Settings:
 
 ### Format your Geometry
 
-The app uses the user's Active View to build a `FeatureCollection`, complete with properties (parsed from the record ID and primary field). For it to join your data together properly, **your geometry needs to only include geometry**.
+The app uses your Active View to build a `FeatureCollection`, complete with properties (parsed from the record ID and primary field). For it to join your data together properly, **your geometry needs to only include geometry**.
 
 Here is an example of valid geometry for a Polygon:
 ```
