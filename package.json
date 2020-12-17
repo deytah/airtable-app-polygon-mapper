@@ -1,6 +1,6 @@
 {
-  "name": "airtable-app-mapbox",
-  "version": "0.2.0",
+  "name": "airtable-app-polygon-mapper",
+  "version": "1.0.0",
   "description": "Mapbox GL for Airtable",
   "url": "https://github.com/deytah/airtable-app-mapbox",
   "author": {
