@@ -91,7 +91,8 @@ function App({activeTable, activeView, settings}) {
   function onSave() {
     if (map) {
       const values = {};
-      values[settings.geometryField] = JSON.stringify(polygonEditor.get());
+      const geometry = polygonEditor.get();
+      values[settings.geometryField] = geometry ? JSON.stringify(geometry) : geometry;
       polygonEditor.saved();
       activeTable.updateRecordAsync(selectedRecords[0].id, values).then();
     }
