@@ -204,11 +204,18 @@ export function MapBox({
       // Adds additional fill layer and events
       addHover(map);
 
-      // When a click event occurs on a feature in the places layer, open a popup at the
-      // location of the click, with description HTML from its properties.
       map.on('click', 'places-fill', function (e) {
-        selectRecord(e.features[0].properties.id);
+        // Check if click is on top of a new shape.
+        const isNewShape = polygonEditor.isActive(map) && map.queryRenderedFeatures(e.point)
+          .some(feature => feature.source.substring(0, 15) === 'mapbox-gl-draw-');
 
+        // Prevent changing records while drawing a new shape or clicking on a new shape.
+        if (!polygonEditor.isDrawing() && !isNewShape) {
+          selectRecord(e.features[0].properties.id);
+        }
+
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the click, with description HTML from its properties.
         // Popup Tooltip
         // new mapboxgl.Popup()
         // .setLngLat(e.lngLat)
@@ -219,7 +226,9 @@ export function MapBox({
       map.on('click', function (e) {
         const features = map.queryRenderedFeatures(e.point, {layers: ['places-fill']});
         const isActive = polygonEditor.isActive(map);
-        if (!isActive && features.length === 0) {
+        const isDrawing = polygonEditor.isDrawing();
+
+        if (!isDrawing && !isActive && features.length === 0) {
           selectRecord();
         }
       });

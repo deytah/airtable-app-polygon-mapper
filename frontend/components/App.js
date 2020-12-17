@@ -56,6 +56,7 @@ function App({activeTable, activeView, settings}) {
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isChangesConfirmationDialogOpen, setIsChangesConfirmationDialogOpen] = useState(false);
+  const [isChangesConfirmationDialog2Open, setIsChangesConfirmationDialog2Open] = useState(false);
   const [map, setMap] = useState(null);
 
   // Watch
@@ -104,6 +105,14 @@ function App({activeTable, activeView, settings}) {
     }
   }
 
+  function changeEditMode(newValue) {
+    if (newValue === false && (polygonEditor.isDirty() || polygonEditor.isDrawing())) {
+      setIsChangesConfirmationDialog2Open(true);
+    } else {
+      setEditMode(newValue);
+    }
+  }
+
   return (
     <>
       <Box
@@ -133,7 +142,7 @@ function App({activeTable, activeView, settings}) {
           {canUpdate && (
             <SelectButtons
               value={editMode}
-              onChange={newValue => setEditMode(!!newValue)}
+              onChange={changeEditMode}
               options={appMode}
               size="small"
               width="160px"
@@ -243,6 +252,11 @@ function App({activeTable, activeView, settings}) {
         <ChangesConfirmationDialog
           onCancel={() => setIsChangesConfirmationDialogOpen(false)}
           onConfirm={() => updateSelectedRecordsIds()}/>
+      )}
+      {isChangesConfirmationDialog2Open && (
+        <ChangesConfirmationDialog
+          onCancel={() => setIsChangesConfirmationDialog2Open(false)}
+          onConfirm={() => setEditMode(false)}/>
       )}
     </>
   );

@@ -10,15 +10,24 @@ const draw = new MapboxDraw({
 });
 
 let dirty = false;
+let drawing = false;
 
 function init(map) {
+  function cudEvent() {
+    dirty = true;
+  }
+
   map.on('draw.create', cudEvent);
   map.on('draw.delete', cudEvent);
   map.on('draw.update', cudEvent);
 
-  function cudEvent() {
-    dirty = true;
-  }
+  map.on('draw.modechange', (event) => {
+    if (event.mode.substring(0, 5) === 'draw_') {
+      drawing = true;
+    } else if (drawing) {
+      setTimeout(() => drawing = false, 100);
+    }
+  });
 }
 
 function toggle(map, state) {
@@ -28,6 +37,7 @@ function toggle(map, state) {
     if (map.hasControl(draw)) {
       map.removeControl(draw);
       dirty = false;
+      drawing = false;
     }
   }
 }
@@ -50,6 +60,7 @@ function reset(map) {
     draw.deleteAll();
   }
   dirty = false;
+  drawing = false;
 }
 
 export const polygonEditor = {
@@ -58,6 +69,7 @@ export const polygonEditor = {
   init,
   isActive: (map) => map.hasControl(draw),
   isDirty: () => dirty,
+  isDrawing: () => drawing,
   reset,
   saved: () => dirty = false,
   toggle,
