@@ -5,13 +5,8 @@ import * as geojsonBounds from "geojson-bounds";
  * @param map mapboxgl.Map
  * @param selectedRecordIds int[]
  * @param features geoJSON[]
- * @param editMode boolean
  */
-export default function zoomSelected(map, selectedRecordIds, features, editMode) {
-  if (features.length === 0 || editMode) {
-    return;
-  }
-
+export default function zoomSelected(map, selectedRecordIds, features) {
   let base;
 
   if (selectedRecordIds.length !== 0) {
@@ -21,7 +16,7 @@ export default function zoomSelected(map, selectedRecordIds, features, editMode)
       })
       .filter(feature => !!feature);
 
-    if (editMode && selection.length === 0 && selectedRecordIds.length === 1) {
+    if (selection.length === 0 && selectedRecordIds.length === 1) {
       return;
     }
 

@@ -22,6 +22,7 @@ import SaveMapDialog from './SaveMapDialog';
 
 // Lib functions
 import {polygonEditor} from "../lib/polygonEditor";
+import {getRecordsById} from "../lib/getRecordsById";
 
 // Switch options
 const appMode = [
@@ -73,15 +74,8 @@ function App({activeTable, activeView, settings}) {
 
   // Data
   const records = useRecords(activeView);
-
-  const recordMap = new Map();
-  records.forEach(record => recordMap.set(record.id, record));
-
-  const selectedRecords = currentRecordIds
-    .filter(id => recordMap.has(id))
-    .map(id => recordMap.get(id));
-
-  const jsonErrorRecords = jsonErrorRecordIds.map(id => recordMap.get(id));
+  const selectedRecords = getRecordsById(records, currentRecordIds);
+  const jsonErrorRecords = getRecordsById(records, jsonErrorRecordIds);
 
   function updateSelectedRecordsIds() {
     setIsChangesConfirmationDialogOpen(false);

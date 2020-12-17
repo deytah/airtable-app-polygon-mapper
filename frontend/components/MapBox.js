@@ -22,6 +22,7 @@ import {removeImageSources, updateImageSources} from "../map/addImagesSources";
 import {addPlacesLayers, setPlacesFillOpacity} from "../map/addPlacesLayers";
 import addSources from "../map/addSources";
 import zoomSelected from '../map/zoomSelected';
+import {getRecordsById} from "../lib/getRecordsById";
 
 export function MapBox({
                          // properties
@@ -116,7 +117,7 @@ export function MapBox({
 
   useEffect(() => {
     if (initialized) {
-      zoomSelected(map, selectedRecordIds, features, editMode);
+      tryZooming();
 
       if (selectedRecordIds.length === 1 && editMode) {
         try {
@@ -270,10 +271,27 @@ export function MapBox({
       });
 
       if (!initialized) {
-        zoomSelected(map, selectedRecordIds, features, editMode);
+        tryZooming();
         setInitialized(true);
       }
     }
+  }
+
+  function tryZooming() {
+    if (features.length === 0 || editMode) {
+      return;
+    }
+
+    if (selectedRecordIds.length > 0) {
+      // If all selected records don't have any geometry, don't zoom
+      const nonemptyGeometryRecords = getRecordsById(records, selectedRecordIds)
+        .filter(record => record.getCellValue(geometryField));
+      if (nonemptyGeometryRecords.length === 0) {
+        return;
+      }
+    }
+
+    zoomSelected(map, selectedRecordIds, features)
   }
 
   // Observe features for record changes
