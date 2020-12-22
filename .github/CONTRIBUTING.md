@@ -18,11 +18,11 @@ The app should use and adhere to Airtable's [User interface guidelines](https://
 
 ### Reporting Bugs
 
-Before submitting a bug, review [the list](https://github.com/deytah/airtable-app-mapbox/issues?q=is%3Aissue+sort%3Aupdated-desc+label%3Abug+) as you might find out that you don't need to create one. When you are creating a bug report, please include as many details as possible. Fill out the "Bug Report" template, the information it asks for helps us resolve issues faster.
+Before submitting a bug, review [the list](https://github.com/deytah/airtable-app-polygon-mapper/issues?q=is%3Aissue+sort%3Aupdated-desc+label%3Abug+) as you might find out that you don't need to create one. When you are creating a bug report, please include as many details as possible. Fill out the "Bug Report" template, the information it asks for helps us resolve issues faster.
 
 ### Resolving Bugs
 
-You may submit Pull Requests with the "Bug Fix" template to resolve Bug Reports in Issues. [Browse the list](https://github.com/deytah/airtable-app-mapbox/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) for open issues.
+You may submit Pull Requests with the "Bug Fix" template to resolve Bug Reports in Issues. [Browse the list](https://github.com/deytah/airtable-app-polygon-mapper/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) for open issues.
 
 ### Proposing Features / Suggesting Enhancements
 
@@ -34,7 +34,7 @@ Documentation for this project is maintained as a GitHub Wiki. If you have addit
 
 ## Discussions
 
-You can also ask questions and answer others' in [Discussions](https://github.com/deytah/airtable-app-mapbox/discussions).
+You can also ask questions and answer others' in [Discussions](https://github.com/deytah/airtable-app-polygon-mapper/discussions).
 
 ## Style Guide
 

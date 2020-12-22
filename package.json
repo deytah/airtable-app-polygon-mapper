@@ -2,7 +2,7 @@
   "name": "airtable-app-polygon-mapper",
   "version": "1.0.0",
   "description": "Mapbox GL for Airtable",
-  "url": "https://github.com/deytah/airtable-app-mapbox",
+  "url": "https://github.com/deytah/airtable-app-polygon-mapper",
   "author": {
     "name": "Deytah",
     "email": "support@deytah.io",
@@ -19,8 +19,8 @@
     }
   ],
   "license": "See LICENSE.md",
-  "repository": "https://github.com/deytah/airtable-app-mapbox",
-  "bugs": "https://github.com/deytah/airtable-app-mapbox/issues",
+  "repository": "https://github.com/deytah/airtable-app-polygon-mapper",
+  "bugs": "https://github.com/deytah/airtable-app-polygon-mapper/issues",
   "dependencies": {
     "@airtable/blocks": "1.2.0",
     "@mapbox/mapbox-gl-draw": "github:deytah/mapbox-gl-draw",
